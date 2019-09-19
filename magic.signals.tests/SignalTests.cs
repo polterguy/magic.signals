@@ -49,6 +49,65 @@ namespace magic.signals.tests
             Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
         }
 
+        [Fact]
+        public void StackTest_01()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            signaler.Push("its-name", "its-value");
+
+            // Asserts.
+            Assert.Equal("its-value", signaler.Peek<string>("its-name"));
+        }
+
+        [Fact]
+        public void StackTest_02_Throws()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Asserts.
+            Assert.Throws<ArgumentException>(() => signaler.Peek<string>("its-name"));
+        }
+
+        [Fact]
+        public void StackTest_03_Throws()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            signaler.Push("its-name", "its-value");
+
+            // Popping it off again.
+            signaler.Pop();
+
+            // Asserts.
+            Assert.Throws<ArgumentException>(() => signaler.Peek<string>("its-name"));
+        }
+
+        [Fact]
+        public void StackTest_04()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            signaler.Push("value", "hello world");
+
+            var result = new Node();
+            signaler.Signal("stack.test", result);
+
+            // Asserts.
+            Assert.Equal("hello world", result.Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         /*

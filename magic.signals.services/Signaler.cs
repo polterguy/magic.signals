@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
@@ -17,6 +18,7 @@ namespace magic.signals.services
     {
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
+        readonly List<Tuple<string, object>> _stack = new List<Tuple<string, object>>();
 
         public Signaler(IServiceProvider provider, ISignalsProvider signals)
         {
@@ -34,6 +36,23 @@ namespace magic.signals.services
 
             var instance = _provider.GetService(type) as ISlot;
             instance.Signal(this, input);
+        }
+
+        public void Push(string name, object value)
+        {
+            _stack.Add(new Tuple<string, object>(name, value));
+        }
+
+        public T Peek<T>(string name) where T : class
+        {
+            return _stack.AsEnumerable().Reverse().FirstOrDefault(x => x.Item1 == name)?.Item2 as T ??
+                throw new ArgumentException($"No stack object named '{name}'");
+        }
+
+        public void Pop()
+        {
+            var toRemove = _stack.Last();
+            _stack.Remove(toRemove);
         }
 
         public IEnumerable<string> Slots => _signals.Keys;
