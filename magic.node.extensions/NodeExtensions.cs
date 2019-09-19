@@ -5,29 +5,49 @@
 
 using System;
 using System.Linq;
-using magic.signals.contracts;
+using System.Globalization;
+using System.Collections.Generic;
+using magic.node.expressions;
 
 namespace magic.node.extensions
 {
+    /// <summary>
+    /// Extension class extending the Node class with convenience methods.
+    /// </summary>
     public static class NodeExtensions
     {
-        public static object GetEx(this Node node, ISignaler signaler, bool evaluate = true)
+        /// <summary>
+        /// Evaluates the expression found in the node's value, and returns the results of the evaluation
+        /// </summary>
+        /// <returns>Result of evaluation</returns>
+        public static IEnumerable<Node> Evaluate(this Node node)
         {
-            if (node.Value is Signal signal)
-            {
-                signaler.Signal(signal.Content.Name, signal.Content);
-                return signal.Content.Value;
-            }
-            return node.Get(evaluate);
+            if (!(node.Value is Expression ex))
+                throw new ApplicationException($"'{node.Value}' is not a valid Expression");
+
+            return ex.Evaluate(node);
         }
 
-        public static T GetEx<T>(this Node node, ISignaler signaler)
+        /// <summary>
+        /// Returns the value of the node as typeof(T)
+        /// </summary>
+        /// <typeparam name="T">Type to return value as, might imply conversion if value is not already of the specified type.</typeparam>
+        /// <returns>The node's value as an object of type T</returns>
+        public static T Get<T>(this Node node)
         {
-            if (node.Value is Signal signal)
-            {
-                signaler.Signal(signal.Content.Name, signal.Content);
-                return signal.Content.Get<T>();
-            }
+            if (typeof(T) == typeof(Expression) && node.Value is Expression)
+                return (T)node.Value;
+
+            var value = node.Value;
+            if (value is T result)
+                return result;
+
+            // Converting, the simple version.
+            return (T)Convert.ChangeType(node.Value, typeof(T), CultureInfo.InvariantCulture);
+        }
+
+        public static T GetEx<T>(this Node node)
+        {
             if (node.Value is Expression exp)
             {
                 var value = exp.Evaluate(node);
@@ -35,7 +55,7 @@ namespace magic.node.extensions
                     throw new ApplicationException("Multiple resulting nodes from expression");
                 if (!value.Any())
                     return default(T);
-                return value.First().GetEx<T>(signaler);
+                return value.First().GetEx<T>();
             }
             return node.Get<T>();
         }

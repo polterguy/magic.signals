@@ -6,6 +6,7 @@
 using System.Linq;
 using Xunit;
 using magic.node;
+using magic.node.expressions;
 using magic.node.extensions.hyperlambda;
 
 namespace magic.signals.tests

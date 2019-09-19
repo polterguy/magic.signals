@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
+using magic.node.extensions;
 using magic.common.contracts;
 using magic.signals.contracts;
 

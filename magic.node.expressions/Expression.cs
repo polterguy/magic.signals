@@ -10,7 +10,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.utils;
 
-namespace magic.node
+namespace magic.node.expressions
 {
     /// <summary>
     /// Expression class for creating lambda expressions, referencing nodes in your Node lambda objects.

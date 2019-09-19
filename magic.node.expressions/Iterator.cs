@@ -8,7 +8,7 @@ using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 
-namespace magic.node
+namespace magic.node.expressions
 {
     /// <summary>
     /// A single iterator component for an expression. Basically, an expression is really nothing but
@@ -80,7 +80,7 @@ namespace magic.node
                     return (identiy, input) => input.SelectMany(x => x.Children);
 
                 case "#":
-                    return (identiy, input) => input.Select(x => x.Get<Node>());
+                    return (identiy, input) => input.Select(x => x.Value as Node);
 
                 case "-":
                     return (identiy, input) => input.Select(x => x.Previous ?? x.Parent.Children.Last());
@@ -133,7 +133,7 @@ namespace magic.node
                 value.EndsWith("}", StringComparison.InvariantCulture))
             {
                 var index = int.Parse(value.Substring(1, value.Length - 2));
-                return (identity, input) => input.Where(x => x.Name == identity.Children.Skip(index).First().Get<string>());
+                return (identity, input) => input.Where(x => x.Name == identity.Children.Skip(index).First().Value.ToString());
             }
 
             if (value.StartsWith("=", StringComparison.InvariantCulture))

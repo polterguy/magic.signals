@@ -11,9 +11,13 @@ using magic.utils;
 
 namespace magic.node.extensions.hyperlambda
 {
-    public sealed class Tokenizer
+    /*
+     * Internal tokenizer class, for tokenizing a stream of characters into tokens
+     * required for the Hyperlambda parser.
+     */
+    internal sealed class Tokenizer
     {
-        StreamReader _reader;
+        readonly StreamReader _reader;
 
         public Tokenizer(StreamReader reader)
         {
@@ -55,8 +59,7 @@ namespace magic.node.extensions.hyperlambda
                             }
                             else
                             {
-                                builder.Append('@');
-                                builder.Append(next);
+                                builder.Append('@').Append(next);
                             }
                         }
                         break;
@@ -82,11 +85,14 @@ namespace magic.node.extensions.hyperlambda
                             builder.Clear();
                         }
                         _reader.Read(); // Discarding '\r'.
+
                         if (_reader.EndOfStream)
                             throw new ApplicationException("CR/LF error close to EOF");
+
                         var lf = (char)_reader.Read();
                         if (lf != '\n')
                             throw new ApplicationException("CR/LF error in Hyperlambda");
+
                         yield return "\r\n";
                         break;
 

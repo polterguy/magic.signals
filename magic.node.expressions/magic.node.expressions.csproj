@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\magic.node.expressions\magic.node.expressions.csproj" />
     <ProjectReference Include="..\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\magic.utils\magic.utils.csproj" />
   </ItemGroup>
+
 </Project>

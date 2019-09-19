@@ -7,14 +7,21 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
-using System.Globalization;
 
 namespace magic.node.extensions.hyperlambda
 {
+    /// <summary>
+    /// Class allowing you to parse Hyperlambda from its textual representation, and create
+    /// a lambda structure out of it.
+    /// </summary>
     public sealed class Parser
     {
-        Node _root = new Node();
+        readonly Node _root = new Node();
 
+        /// <summary>
+        /// Creates a new parser intended for parsing the specified Hyperlambda.
+        /// </summary>
+        /// <param name="hyperlambda">Hyperlambda you want to parse.</param>
         public Parser(string hyperlambda)
         {
             using (var reader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(hyperlambda))))
@@ -23,6 +30,10 @@ namespace magic.node.extensions.hyperlambda
             }
         }
 
+        /// <summary>
+        /// Creates a new parse for Hyperlambda, parsing directly from the specified stream.
+        /// </summary>
+        /// <param name="stream">Stream to parse Hyperlambda from. Can be a forward only stream if necessary.</param>
         public Parser(Stream stream)
         {
             using (var reader = new StreamReader(stream, Encoding.UTF8))
@@ -31,58 +42,24 @@ namespace magic.node.extensions.hyperlambda
             }
         }
 
+        /// <summary>
+        /// Returns the root lambda node parsed from your Hyperlambda.
+        /// 
+        /// Notice, each node in your Hyperlambda at root level, will be a child node of the root node
+        /// returned from this method.
+        /// </summary>
+        /// <returns></returns>
         public Node Lambda()
         {
             return _root;
         }
 
-        public static object ConvertValue(string value, string type)
-        {
-            switch (type)
-            {
-                case "string":
-                    return value;
-                case "int":
-                    return Convert.ToInt32(value, CultureInfo.InvariantCulture);
-                case "uint":
-                    return Convert.ToUInt32(value, CultureInfo.InvariantCulture);
-                case "long":
-                    return Convert.ToInt64(value, CultureInfo.InvariantCulture);
-                case "ulong":
-                    return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
-                case "decimal":
-                    return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
-                case "double":
-                    return Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                case "single":
-                    return Convert.ToSingle(value, CultureInfo.InvariantCulture);
-                case "bool":
-                    return value.Equals("true");
-                case "date":
-                    return DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
-                case "guid":
-                    return new Guid(value);
-                case "char":
-                    return Convert.ToChar(value, CultureInfo.InvariantCulture);
-                case "byte":
-                    return Convert.ToByte(value, CultureInfo.InvariantCulture);
-                case "x":
-                    return new Expression(value);
-                case "signal":
-                    return new Signal(value);
-                case "node":
-                    return new Parser(value).Lambda();
-                default:
-                    throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
-            }
-        }
-
         #region [ -- Private helper methods -- ]
 
-        void Parse(StreamReader _reader)
+        void Parse(StreamReader reader)
         {
             var currentParent = _root;
-            var tokenizer = new Tokenizer(_reader);
+            var tokenizer = new Tokenizer(reader);
             var en = tokenizer.GetTokens().GetEnumerator();
 
             Node idxNode = null;
@@ -166,7 +143,7 @@ namespace magic.node.extensions.hyperlambda
                             }
                             else
                             {
-                                idxNode.Value = ConvertValue(token, idxNode.Get<string>());
+                                idxNode.Value = Converter.ConvertFromString(token, idxNode.Get<string>());
                             }
                         }
                         previous = token;

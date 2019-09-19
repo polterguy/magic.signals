@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using magic.node.expressions;
 
 namespace magic.node.extensions.hyperlambda
 {
@@ -40,96 +41,9 @@ namespace magic.node.extensions.hyperlambda
 
                 if (idx.Value != null)
                 {
-                    string type = null;
-                    string value = null;
-
-                    switch (idx.Value.GetType().FullName)
-                    {
-                        case "System.String":
-                            value = idx.Get<string>();
-                            if (value.Contains("\n"))
-                                value = "@\"" + value.Replace("\"", "\"\"") + "\"";
-                            else if (value.Contains("\"") || value.Contains(":"))
-                                value = "\"" + value.Replace("\"", "\\\"") + "\"";
-                            break;
-
-                        case "System.Int32":
-                            type = "int";
-                            value = idx.Get<int>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.UInt32":
-                            type = "uint";
-                            value = idx.Get<int>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Int64":
-                            type = "long";
-                            value = idx.Get<long>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.UInt64":
-                            type = "ulong";
-                            value = idx.Get<long>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Decimal":
-                            type = "decimal";
-                            value = idx.Get<decimal>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Double":
-                            type = "double";
-                            value = idx.Get<double>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Single":
-                            type = "float";
-                            value = idx.Get<float>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Boolean":
-                            type = "bool";
-                            value = idx.Get<bool>().ToString(CultureInfo.InvariantCulture).ToLower();
-                            break;
-
-                        case "System.DateTime":
-                            type = "date";
-                            value = idx.Get<DateTime>().ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Guid":
-                            type = "bool";
-                            value = idx.Get<Guid>().ToString();
-                            break;
-
-                        case "System.Char":
-                            type = "char";
-                            value = idx.Get<char>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "System.Byte":
-                            type = "bool";
-                            value = idx.Get<byte>().ToString(CultureInfo.InvariantCulture);
-                            break;
-
-                        case "magic.node.Expression":
-                            type = "x";
-                            value = idx.Get<Expression>().Value;
-                            break;
-
-                        case "magic.hyperlambda.Signal":
-                            type = "signal";
-                            value = "@\"" + GetHyper(new Node[] { idx.Get<Signal>().Content.Clone() }).Replace("\"", "\"\"").TrimEnd() + "\"";
-                            break;
-
-                        case "magic.node.Node":
-                            type = "node";
-                            value = "@\"" + GetHyper(idx.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
-                            break;
-                    }
+                    var value = Converter.ConvertToString(idx, out string type);
                     builder.Append(":");
-                    if (type != null)
+                    if (!string.IsNullOrEmpty(type) && type != "string")
                         builder.Append(type + ":");
                     builder.Append(value);
                 }

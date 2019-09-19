@@ -4,9 +4,6 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections;
-using System.Globalization;
 using System.Collections.Generic;
 
 namespace magic.node
@@ -129,59 +126,6 @@ namespace magic.node
                     return null;
                 return Parent._children[indexOfThis + 1];
             }
-        }
-
-        /// <summary>
-        /// Returns the value of your node, possibly implying evaluating any expressions found in its value,
-        /// unless you explicitly specify false for its "evaluate" argument
-        /// </summary>
-        /// <param name="evaluate">whether or not expressions should be followed deeply, and evaluated</param>
-        /// <returns></returns>
-        public object Get(bool evaluate = true)
-        {
-            if (evaluate && Value is Expression ex)
-            {
-                var nodes = ex.Evaluate(this);
-
-                if (nodes.Count() > 1)
-                    throw new ApplicationException("Multiple values returned from Expression in Get");
-
-                if (nodes.Any())
-                    return nodes.First().Get();
-
-                return null;
-            }
-            return Value;
-        }
-
-        /// <summary>
-        /// Evaluates the expression found in the node's value, and returns the results of the evaluation
-        /// </summary>
-        /// <returns>Result of evaluation</returns>
-        public IEnumerable<Node> Evaluate()
-        {
-            if (!(Value is Expression ex))
-                throw new ApplicationException($"'{Value}' is not a valid Expression");
-
-            return ex.Evaluate(this);
-        }
-
-        /// <summary>
-        /// Returns the value of the node as typeof(T)
-        /// </summary>
-        /// <typeparam name="T">Type to return value as, might imply conversion if value is not already of the specified type.</typeparam>
-        /// <returns>The node's value as an object of type T</returns>
-        public T Get<T>()
-        {
-            if (typeof(T) == typeof(Expression) && Value is Expression)
-                return (T)Value;
-
-            var value = Get();
-            if (value is T result)
-                return result;
-
-            // Converting, the simple version.
-            return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
