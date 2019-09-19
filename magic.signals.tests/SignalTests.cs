@@ -15,33 +15,45 @@ using magic.signals.contracts;
 
 namespace magic.signals.tests
 {
+    /*
+     * Unit tests for signals and slots implementation.
+     */
     public class SignalTests
     {
-        #region [ -- Unit tests -- ]
-
         [Fact]
         public void Signal()
         {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Creating some arguments for our signal.
             var input = new Node();
             input.Add(new Node("bar", "Jo!"));
-            signaler.Signal(signaler, "foo.bar", input);
+
+            // Signaling the 'foo.bar' slot with the given arguments.
+            signaler.Signal("foo.bar", input);
+
+            // Asserts.
             Assert.Equal("Jo!Yup!", input.Children.First().Get<string>());
         }
 
         [Fact]
         public void SignalNoExisting_Throws()
         {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-            Assert.Throws<ApplicationException>(() => signaler.Signal(signaler, "foo.bar-XXX", new Node()));
-        }
 
-        #endregion
+            // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
+            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+        }
 
         #region [ -- Private helper methods -- ]
 
+        /*
+         * Helper method to wire up and create our IServiceProvider correctly.
+         */
         IServiceProvider Initialize()
         {
             var configuration = new ConfigurationBuilder().Build();
@@ -55,6 +67,10 @@ namespace magic.signals.tests
             return provider;
         }
 
+        /*
+         * Helper for above, that simply loops through all types in AppDomain, and yield returns
+         * each type as an instance back to caller for each type being of specified type.
+         */
         static IEnumerable<T> InstantiateAllTypes<T>() where T : class
         {
             var type = typeof(T);

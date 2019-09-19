@@ -10,8 +10,16 @@ using System.Text;
 
 namespace magic.utils
 {
-    public class StringLiteralParser
+    /// <summary>
+    /// Helper class to help parse string literals.
+    /// </summary>
+    public static class StringLiteralParser
     {
+        /// <summary>
+        /// Reads a multline string literal, basically a string surrounded by @"".
+        /// </summary>
+        /// <param name="reader">Stream reader to read from. Expects position to be after the initial '"' character.</param>
+        /// <returns></returns>
         public static string ReadMultiLineString(StreamReader reader)
         {
             var builder = new StringBuilder();
@@ -44,6 +52,11 @@ namespace magic.utils
             throw new Exception(string.Format("String literal not closed before end of input near '{0}'", builder));
         }
 
+        /// <summary>
+        /// Reads a single line string literal, basically a string surrounded by only "".
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public static string ReadQuotedString(StreamReader reader)
         {
             var endCharacter = (char)reader.Read();

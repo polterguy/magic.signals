@@ -10,7 +10,10 @@ using magic.signals.contracts;
 
 namespace magic.signals.services
 {
-    public class SignalsProvider : ISignalsProvider
+    /*
+     * Implementation service class for the ISignalsProvider interface.
+     */
+    internal class SignalsProvider : ISignalsProvider
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
 

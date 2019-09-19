@@ -92,7 +92,7 @@ namespace magic.node
                 {
                     while (!reader.EndOfStream)
                     {
-                        var idx = (char)reader.Read();
+                        var idx = (char)reader.Peek();
                         if (idx == -1)
                             break;
 
@@ -109,6 +109,7 @@ namespace magic.node
                         {
                             builder.Append(idx);
                         }
+                        reader.Read(); // Simply discarding currently handled character.
                     }
                 }
             }

@@ -133,9 +133,9 @@ namespace magic.node
 
         /// <summary>
         /// Returns the value of your node, possibly implying evaluating any expressions found in its value,
-        /// unless you 
+        /// unless you explicitly specify false for its "evaluate" argument
         /// </summary>
-        /// <param name="evaluate"></param>
+        /// <param name="evaluate">whether or not expressions should be followed deeply, and evaluated</param>
         /// <returns></returns>
         public object Get(bool evaluate = true)
         {
@@ -154,6 +154,10 @@ namespace magic.node
             return Value;
         }
 
+        /// <summary>
+        /// Evaluates the expression found in the node's value, and returns the results of the evaluation
+        /// </summary>
+        /// <returns>Result of evaluation</returns>
         public IEnumerable<Node> Evaluate()
         {
             if (!(Value is Expression ex))
@@ -162,6 +166,11 @@ namespace magic.node
             return ex.Evaluate(this);
         }
 
+        /// <summary>
+        /// Returns the value of the node as typeof(T)
+        /// </summary>
+        /// <typeparam name="T">Type to return value as, might imply conversion if value is not already of the specified type.</typeparam>
+        /// <returns>The node's value as an object of type T</returns>
         public T Get<T>()
         {
             if (typeof(T) == typeof(Expression) && Value is Expression)
@@ -175,43 +184,10 @@ namespace magic.node
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
-        public IEnumerable<T> GetList<T>()
-        {
-            // Verifying we've got anything at all here, returning an empty enumerator if not.
-            if (Value == null)
-                yield break;
-
-            if (Value is Expression ex)
-            {
-                foreach (var idx in ex.Evaluate(this))
-                {
-                    if (idx.Value is Expression exInner)
-                    {
-                        foreach (var idxInner in idx.GetList<T>())
-                        {
-                            yield return idxInner;
-                        }
-                    }
-                    else
-                    {
-                        yield return idx.Get<T>();
-                    }
-                }
-            }
-            else
-            {
-                foreach (var idx in Value as IEnumerable)
-                {
-                    if (idx == null)
-                        yield return default(T);
-                    else if (typeof(T) == idx.GetType())
-                        yield return (T)idx;
-                    else
-                        yield return (T)Convert.ChangeType(idx, typeof(T), CultureInfo.InvariantCulture);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Appends a node into the node's children collection.
+        /// </summary>
+        /// <param name="value">Node to append. Notice, will be untied from any previous parents.</param>
         public void Add(Node value)
         {
             if (value.Parent != null)
@@ -221,6 +197,10 @@ namespace magic.node
             _children.Add(value);
         }
 
+        /// <summary>
+        /// Inserts the node after the node's current position in its parent's children collection.
+        /// </summary>
+        /// <param name="value">Node to insert</param>
         public void InsertAfter(Node value)
         {
             if (Parent == null)
@@ -230,6 +210,10 @@ namespace magic.node
             Parent.Insert(indexOfThis + 1, value);
         }
 
+        /// <summary>
+        /// Inserts the node before the node's current position in its parent's children collection.
+        /// </summary>
+        /// <param name="value">Node to insert</param>
         public void InsertBefore(Node value)
         {
             if (Parent == null)
@@ -239,6 +223,10 @@ namespace magic.node
             Parent.Insert(indexOfThis, value);
         }
 
+        /// <summary>
+        /// Inserts the node at the specified index in its children collection.
+        /// </summary>
+        /// <param name="value">Node to insert</param>
         public void Insert(int index, Node value)
         {
             if (value.Parent != null)
@@ -248,6 +236,10 @@ namespace magic.node
             _children.Insert(index, value);
         }
 
+        /// <summary>
+        /// Appends a range of nodes to the node's children collection.
+        /// </summary>
+        /// <param name="values">Nodes to append</param>
         public void AddRange(IEnumerable<Node> values)
         {
             foreach (var idx in values)
@@ -256,17 +248,28 @@ namespace magic.node
             }
         }
 
+        /// <summary>
+        /// Removes the specified node from the node's children collection.
+        /// </summary>
+        /// <param name="value"></param>
         public void Remove(Node value)
         {
             value.Parent = null;
             _children.Remove(value);
         }
 
+        /// <summary>
+        /// Removes all nodes from the node's children collection.
+        /// </summary>
         public void Clear()
         {
             _children.Clear();
         }
 
+        /// <summary>
+        /// Clones the given node, except its parent or ancestor node(s), and returns the result.
+        /// </summary>
+        /// <returns>A clone of the current node. Notice, values are also cloned, but only if they implement ICloneable</returns>
         public Node Clone()
         {
             var value = Value;
@@ -281,6 +284,9 @@ namespace magic.node
             return result;
         }
 
+        /// <summary>
+        /// Removes the node from its parent's children collection.
+        /// </summary>
         public void UnTie()
         {
             Parent._children.Remove(this);

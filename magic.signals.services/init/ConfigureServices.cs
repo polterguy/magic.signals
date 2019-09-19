@@ -12,7 +12,11 @@ using magic.signals.contracts;
 
 namespace magic.signals.services.init
 {
-    public class ConfigureServices : IConfigureServices
+    /*
+     * Internal class configuring the service collection to allow for using ISignaler
+     * and ISignalsProvider through IoC and dependency injection.
+     */
+    internal class ConfigureServices : IConfigureServices
     {
         #region [ -- Interface implementations -- ]
 

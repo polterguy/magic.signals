@@ -10,7 +10,10 @@ using magic.signals.contracts;
 
 namespace magic.signals.services
 {
-    public class Signaler : ISignaler
+    /*
+     * Implementation service class for the ISgnaler interface.
+     */
+    internal class Signaler : ISignaler
     {
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
@@ -23,14 +26,14 @@ namespace magic.signals.services
 
         #region [ -- Interface implementations -- ]
 
-        public void Signal(ISignaler signaler, string name, Node input)
+        public void Signal(string name, Node input)
         {
             var type = _signals.GetSignaler(name);
             if (type == null)
                 throw new ApplicationException($"No slot exists for [{name}]");
 
             var instance = _provider.GetService(type) as ISlot;
-            instance.Signal(signaler, input);
+            instance.Signal(this, input);
         }
 
         public IEnumerable<string> Slots => _signals.Keys;

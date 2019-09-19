@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.utils", "magic.utils\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.contracts", "magic.common.contracts\magic.common.contracts.csproj", "{1DD7B332-4DA2-4DC7-8541-51558C58A485}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.node.extensions", "magic.node.extensions\magic.node.extensions.csproj", "{BA151787-570E-4CD4-8F70-6313B489FADB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1DD7B332-4DA2-4DC7-8541-51558C58A485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DD7B332-4DA2-4DC7-8541-51558C58A485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DD7B332-4DA2-4DC7-8541-51558C58A485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA151787-570E-4CD4-8F70-6313B489FADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA151787-570E-4CD4-8F70-6313B489FADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA151787-570E-4CD4-8F70-6313B489FADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA151787-570E-4CD4-8F70-6313B489FADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
