@@ -11,23 +11,41 @@ using System.Collections.Generic;
 
 namespace magic.node
 {
+    /// <summary>
+    /// Graph class allowing you to declare tree structures as name/value/children collections.
+    /// 
+    /// Note, contrary to JSON, and similar formats, hte name is not a "key", and can be duplicated
+    /// multiple times in the same "scope".
+    /// </summary>
     public class Node : ICloneable
     {
         readonly List<Node> _children;
         string _name;
 
+        /// <summary>
+        /// Creates an empty node, with a "" name, a null value, and zero children.
+        /// </summary>
         public Node()
         {
             _name = "";
             _children = new List<Node>();
         }
 
+        /// <summary>
+        /// Creates a new node with the specified name, null value, and zero children.
+        /// </summary>
+        /// <param name="name">Name for node</param>
         public Node(string name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             _children = new List<Node>();
         }
 
+        /// <summary>
+        /// Creates a new node with the given name, given value, and zero children.
+        /// </summary>
+        /// <param name="name">Name for node</param>
+        /// <param name="value">Value for node</param>
         public Node(string name, object value)
         {
             Name = name;
@@ -35,6 +53,12 @@ namespace magic.node
             _children = new List<Node>();
         }
 
+        /// <summary>
+        /// Creates a new node with the given name, value and children.
+        /// </summary>
+        /// <param name="name">Name for node</param>
+        /// <param name="value">Value for node</param>
+        /// <param name="children">Initial children collection for node</param>
         public Node(string name, object value, IEnumerable<Node> children)
         {
             Name = name;
@@ -46,21 +70,36 @@ namespace magic.node
             }
         }
 
+        /// <summary>
+        /// Name of your node.
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { _name = value ?? throw new ArgumentNullException(nameof(value)); }
         }
 
+        /// <summary>
+        /// Value of your node.
+        /// </summary>
         public object Value { get; set; }
 
+        /// <summary>
+        /// Children of your node.
+        /// </summary>
         public IEnumerable<Node> Children
         {
             get { return _children; }
         }
 
+        /// <summary>
+        /// Your node's parent node, if any.
+        /// </summary>
         public Node Parent { get; private set; }
 
+        /// <summary>
+        /// Returns the "elder sibling" for your node, if any.
+        /// </summary>
         public Node Previous
         {
             get
@@ -75,6 +114,9 @@ namespace magic.node
             }
         }
 
+        /// <summary>
+        /// Returns the "younger sibling" for your node, if any.
+        /// </summary>
         public Node Next
         {
             get
@@ -89,6 +131,12 @@ namespace magic.node
             }
         }
 
+        /// <summary>
+        /// Returns the value of your node, possibly implying evaluating any expressions found in its value,
+        /// unless you 
+        /// </summary>
+        /// <param name="evaluate"></param>
+        /// <returns></returns>
         public object Get(bool evaluate = true)
         {
             if (evaluate && Value is Expression ex)
