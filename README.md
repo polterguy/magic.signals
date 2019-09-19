@@ -1,6 +1,8 @@
 
 # Magic Signals ASP.NET Core
 
+[![Build status](https://travis-ci.org/polterguy/magic.signals.svg?master)](https://travis-ci.org/polterguy/magic.signals)
+
 Magic signals is a _"Super Signals"_ implementation for .Net Core, allowing you to invoke functions from one assembly
 in another assembly without having any direct references between the projects.
 
