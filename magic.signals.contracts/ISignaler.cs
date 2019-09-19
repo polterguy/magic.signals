@@ -10,7 +10,7 @@ namespace magic.signals.contracts
 {
     public interface ISignaler
     {
-        void Signal(string name, Node input);
+        void Signal(ISignaler signaler, string name, Node input);
 
         IEnumerable<string> Slots { get; }
     }

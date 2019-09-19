@@ -9,6 +9,6 @@ namespace magic.signals.contracts
 {
     public interface ISlot
     {
-        void Signal(Node input);
+        void Signal(ISignaler signaler, Node input);
     }
 }

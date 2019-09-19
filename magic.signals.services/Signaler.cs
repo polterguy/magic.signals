@@ -23,14 +23,14 @@ namespace magic.signals.services
 
         #region [ -- Interface implementations -- ]
 
-        public void Signal(string name, Node input)
+        public void Signal(ISignaler signaler, string name, Node input)
         {
             var type = _signals.GetSignaler(name);
             if (type == null)
                 throw new ApplicationException($"No slot exists for [{name}]");
 
             var instance = _provider.GetService(type) as ISlot;
-            instance.Signal(input);
+            instance.Signal(signaler, input);
         }
 
         public IEnumerable<string> Slots => _signals.Keys;

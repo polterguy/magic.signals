@@ -8,13 +8,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace magic.common.contracts
 {
-    /*
-     * Interface intended for invoking startup logic, such as setting initial default state of
-     * application, or insert default items into database, etc. If you implement this interface
-     * on your type, it will be automatically created and invoked during startup of application.
-     */
+    /// <summary>
+    /// Interface intended for invoking startup logic, such as setting initial default state of
+    /// application, or insert default items into database, etc. If you implement this interface
+    /// on your type, it will be automatically created and invoked during startup of application.
+    /// 
+    /// Requires modification of your Startup file, in addition to a constructor on your implementing
+    /// type taking no arguments.
+    /// </summary>
     public interface IStartup
     {
-        void Initialize(IServiceProvider kernel, IConfiguration configuration);
+        void Initialize(IServiceProvider services, IConfiguration configuration);
     }
 }

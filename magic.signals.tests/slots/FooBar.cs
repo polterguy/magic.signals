@@ -12,7 +12,7 @@ namespace magic.signals.tests.slots
     [Slot(Name = "foo.bar")]
     public class FooBar : ISlot
     {
-        public void Signal(Node input)
+        public void Signal(ISignaler signaler, Node input)
         {
             input.Children.First().Value = input.Children.First().Get<string>() + "Yup!";
         }

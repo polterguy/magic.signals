@@ -26,7 +26,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
             var input = new Node();
             input.Add(new Node("bar", "Jo!"));
-            signaler.Signal("foo.bar", input);
+            signaler.Signal(signaler, "foo.bar", input);
             Assert.Equal("Jo!Yup!", input.Children.First().Get<string>());
         }
 
@@ -35,7 +35,7 @@ namespace magic.signals.tests
         {
             var kernel = Initialize();
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+            Assert.Throws<ApplicationException>(() => signaler.Signal(signaler, "foo.bar-XXX", new Node()));
         }
 
         #endregion
