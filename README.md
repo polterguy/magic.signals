@@ -36,3 +36,13 @@ Tha Magic Signals implementation uses `IServiceProvider` to instantiate your abo
 wants to evaluate your slot. This makes it behave as a good IoC citizen, allowing you to pass in for instance
 interfaces into your constructor, and have the .Net Core dependency injection automatically create objects
 of whatever interface your slot implementation requires.
+
+## Passing arguments to your slots
+
+The Node class provides a graph object for you, allowing you to automagically pass in any arguments you wish.
+Notice, the whole idea is to de-couple your assemblies, hence you shouldn't really pass in anything but _"native types"_,
+such as for instance `System.String`, `System.DateTime`, integers, etc. However, most complex POD structures, can also
+easily be represented using this `Node` class. The Node class is basically a name/value/children graph object, where
+the value can be any object, the name a string, and children is a list of children Nodes. In such a way, it provides
+a more C# friendly graph object, kind of resembling JSON, allowing you to internally within your assemblies, pass
+in a Node object as your parameters form the point you signal, to the slot where you handle the signal.
