@@ -31,3 +31,8 @@ Notice that there are no shared types between the invoker and the handler, and t
 be shared between these two assemblies. This results in an extremely loosely coupled plugin architecture, where you can
 dynamically add any plugin you wish into your AppDomain, by simply referencing whatever plugin assembly you
 wish to bring into your AppDomain, and immediately start consuming your plugin functionality.
+
+Tha Magic Signals implementation uses `IServiceProvider` to instantiate your above `FooBar` class when it
+wants to evaluate your slot. This makes it behave as a good IoC citizen, allowing you to pass in for instance
+interfaces into your constructor, and have the .Net Core dependency injection automatically create objects
+of whatever interface your slot implementation requires.
