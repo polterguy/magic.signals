@@ -54,7 +54,8 @@ namespace magic.signals.services
         /// making sure the evaluation has access to some stack object during its evaluation process.
         /// </summary>
         /// <param name="name">Name to push value unto the stack as.</param>
-        /// <param name="value">Actual object to push unto the stack.</param>
+        /// <param name="value">Actual object to push unto the stack. Notice, object will be automatically disposed at
+        /// the end of the scope if the object implements IDisposable.</param>
         /// <param name="functor">Callback evaluated while stack object is on the stack.</param>
         public void Scope(string name, object value, Action functor)
         {
@@ -65,7 +66,10 @@ namespace magic.signals.services
             }
             finally
             {
-                _stack.RemoveAt(_stack.Count - 1);
+                var obj = _stack[_stack.Count - 1];
+                _stack.Remove(obj);
+                if (obj is IDisposable disp)
+                    disp.Dispose();
             }
         }
 

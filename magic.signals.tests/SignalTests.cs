@@ -49,7 +49,7 @@ namespace magic.signals.tests
         }
 
         [Fact]
-        public void StackTest_01()
+        public void StackTest()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();

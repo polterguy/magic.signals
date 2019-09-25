@@ -47,7 +47,7 @@ namespace magic.node.extensions
         /// <summary>
         /// Will return value of node as typeof(T), converting if necessary, and also evaluating any expressions
         /// found recursively, until a non-expression value is found. Notice, if expressions are evaluated, and the
-        /// result of evaluating the expression finds multiple results, and exception will be thrown.
+        /// result of evaluating the expression finds multiple results, an exception will be thrown.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
