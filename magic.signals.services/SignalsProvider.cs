@@ -13,7 +13,7 @@ namespace magic.signals.services
     /*
      * Implementation service class for the ISignalsProvider interface.
      */
-    internal class SignalsProvider : ISignalsProvider
+    public class SignalsProvider : ISignalsProvider
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
 

@@ -14,7 +14,7 @@ namespace magic.signals.services
     /*
      * Implementation service class for the ISgnaler interface.
      */
-    internal class Signaler : ISignaler
+    public class Signaler : ISignaler
     {
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;

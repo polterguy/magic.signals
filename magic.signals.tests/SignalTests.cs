@@ -5,13 +5,11 @@
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
 using magic.node.extensions;
-using magic.common.contracts;
 using magic.signals.contracts;
 
 namespace magic.signals.tests
@@ -119,29 +117,21 @@ namespace magic.signals.tests
             var configuration = new ConfigurationBuilder().Build();
             var services = new ServiceCollection();
             services.AddTransient<IConfiguration>((svc) => configuration);
-            foreach (var idx in InstantiateAllTypes<IConfigureServices>())
+            var type = typeof(ISlot);
+            var slots = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => type.IsAssignableFrom(p) &&
+                    !p.IsInterface &&
+                    !p.IsAbstract &&
+                    p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
+            foreach (var idx in slots)
             {
-                idx.Configure(services, configuration);
+                services.AddTransient(idx);
             }
+            services.AddSingleton<ISignalsProvider>((svc) => new services.SignalsProvider(slots));
+            services.AddTransient<ISignaler, services.Signaler>();
             var provider = services.BuildServiceProvider();
             return provider;
-        }
-
-        /*
-         * Helper for above, that simply loops through all types in AppDomain, and yield returns
-         * each type as an instance back to caller for each type being of specified type.
-         */
-        static IEnumerable<T> InstantiateAllTypes<T>() where T : class
-        {
-            var type = typeof(T);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
-
-            foreach (var idx in types)
-            {
-                yield return Activator.CreateInstance(idx) as T;
-            }
         }
 
         #endregion
