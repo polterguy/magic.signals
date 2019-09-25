@@ -160,6 +160,22 @@ namespace magic.signals.tests
         }
 
         [Fact]
+        public void Untie()
+        {
+            var n1 = new Node("parent");
+            var n2 = new Node();
+            n1.Add(n2);
+            var n3 = new Node();
+            n1.Add(n3);
+            n1.Children.First().UnTie();
+            Assert.Single(n1.Children);
+            n1.Children.First().UnTie();
+            Assert.Empty(n1.Children);
+            Assert.Null(n2.Parent);
+            Assert.Null(n3.Parent);
+        }
+
+        [Fact]
         public void Next()
         {
             var n1 = new Node("parent1", null, new Node[] { new Node("foo1"), new Node("foo2") });
