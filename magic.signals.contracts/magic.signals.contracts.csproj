@@ -3,8 +3,4 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\magic.node\magic.node.csproj" />
-  </ItemGroup>
 </Project>
