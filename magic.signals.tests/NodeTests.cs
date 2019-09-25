@@ -158,5 +158,19 @@ namespace magic.signals.tests
             Assert.Null(n2.Parent);
             Assert.Null(n3.Parent);
         }
+
+        [Fact]
+        public void Next()
+        {
+            var n1 = new Node("parent1", null, new Node[] { new Node("foo1"), new Node("foo2") });
+            Assert.Equal("foo2", n1.Children.First().Next.Name);
+        }
+
+        [Fact]
+        public void Previous()
+        {
+            var n1 = new Node("parent1", null, new Node[] { new Node("foo1"), new Node("foo2") });
+            Assert.Equal("foo1", n1.Children.Skip(1).First().Previous.Name);
+        }
     }
 }
