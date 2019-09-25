@@ -5,13 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace magic.node
 {
     /// <summary>
     /// Graph class allowing you to declare tree structures as name/value/children collections.
-    /// 
-    /// Note, contrary to JSON, and similar formats, hte name is not a "key", and can be duplicated
+    /// Note, contrary to JSON, and similar formats, the name is not a "key", and can be duplicated
     /// multiple times in the same "scope".
     /// </summary>
     public class Node : ICloneable
@@ -24,7 +24,7 @@ namespace magic.node
         /// </summary>
         public Node()
         {
-            _name = "";
+            Name = "";
             _children = new List<Node>();
         }
 
@@ -34,7 +34,7 @@ namespace magic.node
         /// <param name="name">Name for node</param>
         public Node(string name)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name;
             _children = new List<Node>();
         }
 
@@ -101,12 +101,14 @@ namespace magic.node
         {
             get
             {
+                // Node has no "next sibling" node unless it has a parent node.
                 if (Parent == null)
                     return null;
 
                 var indexOfThis = Parent._children.IndexOf(this);
                 if (indexOfThis == 0)
-                    return null;
+                    return null; // No more "younger siblings".
+
                 return Parent._children[indexOfThis - 1];
             }
         }
@@ -118,12 +120,14 @@ namespace magic.node
         {
             get
             {
+                // Node has no "next sibling" node unless it has a parent node.
                 if (Parent == null)
                     return null;
 
                 var indexOfThis = Parent._children.IndexOf(this);
                 if (indexOfThis == Parent._children.Count - 1)
-                    return null;
+                    return null; // No more "elder siblings".
+
                 return Parent._children[indexOfThis + 1];
             }
         }
@@ -134,59 +138,67 @@ namespace magic.node
         /// <param name="value">Node to append. Notice, will be untied from any previous parents.</param>
         public void Add(Node value)
         {
-            if (value.Parent != null)
-                value.Parent.Remove(value); // Removing from its original parent.
+            // Removing from its original parent.
+            value.Parent?.Remove(value);
 
             value.Parent = this;
             _children.Add(value);
         }
 
         /// <summary>
-        /// Inserts the node after the node's current position in its parent's children collection.
-        /// </summary>
-        /// <param name="value">Node to insert</param>
-        public void InsertAfter(Node value)
-        {
-            if (Parent == null)
-                throw new ApplicationException("Cannot insert after since current node is a root node");
-
-            var indexOfThis = Parent._children.IndexOf(this);
-            Parent.Insert(indexOfThis + 1, value);
-        }
-
-        /// <summary>
-        /// Inserts the node before the node's current position in its parent's children collection.
-        /// </summary>
-        /// <param name="value">Node to insert</param>
-        public void InsertBefore(Node value)
-        {
-            if (Parent == null)
-                throw new ApplicationException("Cannot insert before since current node is a root node");
-
-            var indexOfThis = Parent._children.IndexOf(this);
-            Parent.Insert(indexOfThis, value);
-        }
-
-        /// <summary>
         /// Inserts the node at the specified index in its children collection.
         /// </summary>
-        /// <param name="value">Node to insert</param>
+        /// <param name="value">Node to insert. Notice, will be untied from any previous parents.</param>
         public void Insert(int index, Node value)
         {
-            if (value.Parent != null)
-                value.Parent.Remove(value); // Removing from its original parent.
+            // Removing from its original parent.
+            value.Parent?.Remove(value);
 
             value.Parent = this;
             _children.Insert(index, value);
         }
 
         /// <summary>
+        /// Inserts the node before the node's current position in its parent's children collection.
+        /// </summary>
+        /// <param name="value">Node to insert. Notice, will be untied from any previous parents.</param>
+        public void InsertBefore(Node value)
+        {
+            if (Parent == null)
+                throw new ApplicationException("Cannot insert before since current node is a root node");
+
+            // Removing from its original parent.
+            value.Parent?.Remove(value);
+
+            var indexOfThis = Parent._children.IndexOf(this);
+            Parent.Insert(indexOfThis, value);
+        }
+
+        /// <summary>
+        /// Inserts the node after the node's current position in its parent's children collection.
+        /// </summary>
+        /// <param name="value">Node to insert. Notice, will be untied from any previous parents.</param>
+        public void InsertAfter(Node value)
+        {
+            if (Parent == null)
+                throw new ApplicationException("Cannot insert after since current node is a root node");
+
+            // Removing from its original parent.
+            value.Parent?.Remove(value);
+
+            var indexOfThis = Parent._children.IndexOf(this);
+            Parent.Insert(indexOfThis + 1, value);
+        }
+
+        /// <summary>
         /// Appends a range of nodes to the node's children collection.
         /// </summary>
-        /// <param name="values">Nodes to append</param>
+        /// <param name="values">Nodes to append. Notice, all nodes will be untied from any previous parents.</param>
         public void AddRange(IEnumerable<Node> values)
         {
-            foreach (var idx in values)
+            // ToList in case caller supplies for instance a Children collection to another node, which would
+            // invalidate the enumerator during untie operation.
+            foreach (var idx in values.ToList())
             {
                 Add(idx);
             }
@@ -195,11 +207,13 @@ namespace magic.node
         /// <summary>
         /// Removes the specified node from the node's children collection.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Removes the specified node from the Children collection of the current node.</param>
         public void Remove(Node value)
         {
-            value.Parent = null;
-            _children.Remove(value);
+            if (_children.Remove(value))
+                value.Parent = null;
+            else
+                throw new ArgumentException("Node does not belong to current node's children collection.");
         }
 
         /// <summary>
@@ -207,6 +221,11 @@ namespace magic.node
         /// </summary>
         public void Clear()
         {
+            // Making sure we reset nodes' parents properties first.
+            foreach (var idx in _children)
+            {
+                idx.Parent = null;
+            }
             _children.Clear();
         }
 

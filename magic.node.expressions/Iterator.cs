@@ -39,7 +39,7 @@ namespace magic.node.expressions
         /// </summary>
         /// <param name="identity">Identity node from which the original expression was evaluated from.</param>
         /// <param name="input">A collection of nodes passed in from the result of the evaluation of the previous iterator.</param>
-        /// <returns></returns>
+        /// <returns>An enumerable collection of Nodes, from the result of evaluating the iterator.</returns>
         public IEnumerable<Node> Evaluate(Node identity, IEnumerable<Node> input)
         {
             return _evaluate(identity, input);
@@ -61,6 +61,7 @@ namespace magic.node.expressions
         {
             if (!(obj is Iterator it))
                 return false;
+
             return Value.Equals(it.Value);
         }
 

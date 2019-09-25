@@ -80,8 +80,8 @@ namespace magic.node.extensions.hyperlambda
         /// type information
         /// </summary>
         /// <param name="node">Node to retrieve value from</param>
-        /// <param name="type">Output parameter declaring its type declaration in string format</param>
-        /// <returns></returns>
+        /// <param name="type">Output parameter declaring its type declaration in string format.</param>
+        /// <returns>String representation of value from spceified node.</returns>
         public static string ConvertToString(Node node, out string type)
         {
             string value = null;

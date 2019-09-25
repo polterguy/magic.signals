@@ -33,7 +33,7 @@ namespace magic.node.extensions.hyperlambda
         /// <summary>
         /// Creates a new parse for Hyperlambda, parsing directly from the specified stream.
         /// </summary>
-        /// <param name="stream">Stream to parse Hyperlambda from. Can be a forward only stream if necessary.</param>
+        /// <param name="stream">Stream to parse Hyperlambda from. Can be a forward only stream if required.</param>
         public Parser(Stream stream)
         {
             using (var reader = new StreamReader(stream, Encoding.UTF8))
@@ -44,11 +44,10 @@ namespace magic.node.extensions.hyperlambda
 
         /// <summary>
         /// Returns the root lambda node parsed from your Hyperlambda.
-        /// 
         /// Notice, each node in your Hyperlambda at root level, will be a child node of the root node
         /// returned from this method.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Root node containing all first level nodes from your Hyperlambda.</returns>
         public Node Lambda()
         {
             return _root;

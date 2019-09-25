@@ -72,6 +72,7 @@ namespace magic.node.expressions
         {
             if (!(obj is Expression ex))
                 return false;
+
             return Value.Equals(ex.Value);
         }
 
