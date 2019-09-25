@@ -3,16 +3,22 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
 using System.Text;
-using System.Globalization;
 using System.Collections.Generic;
-using magic.node.expressions;
 
 namespace magic.node.extensions.hyperlambda
 {
+    /// <summary>
+    /// Class to help convert a bunch of nodes into its Hyperlambda (text) representation.
+    /// </summary>
     public sealed class Stringifier
     {
+        /// <summary>
+        /// Returns the Hyperlambda/string representation of the given list of nodes.
+        /// Notice, will not serialize parent nodes, only nodes downwards in hierarchy.
+        /// </summary>
+        /// <param name="nodes">Root nodes to convert to Hyperlambda.</param>
+        /// <returns>Hyperlambda representation of nodes.</returns>
         public static string GetHyper(IEnumerable<Node> nodes)
         {
             var result = new StringBuilder();

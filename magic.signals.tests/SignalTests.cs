@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
 using magic.node.extensions;
+using magic.signals.services;
 using magic.signals.contracts;
 
 namespace magic.signals.tests
@@ -27,14 +28,13 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Creating some arguments for our signal.
-            var input = new Node();
-            input.Add(new Node("bar", "Jo!"));
+            var input = new Node("foo.bar", "hello ");
 
             // Signaling the 'foo.bar' slot with the given arguments.
-            signaler.Signal("foo.bar", input);
+            signaler.Signal(input);
 
             // Asserts.
-            Assert.Equal("Jo!Yup!", input.Children.First().Get<string>());
+            Assert.Equal("hello world", input.Get<string>());
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+            Assert.Throws<ApplicationException>(() => signaler.Signal(new Node("foo.bar-XXX")));
         }
 
         [Fact]
@@ -56,52 +56,8 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Pushing some string unto our stack.
-            signaler.Push("its-name", "its-value");
-
-            // Asserts.
-            Assert.Equal("its-value", signaler.Peek<string>("its-name"));
-        }
-
-        [Fact]
-        public void StackTest_02_Throws()
-        {
-            // Creating our IServiceProvider, and retrieving our ISignaler.
-            var kernel = Initialize();
-            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-
-            // Asserts.
-            Assert.Throws<ArgumentException>(() => signaler.Peek<string>("its-name"));
-        }
-
-        [Fact]
-        public void StackTest_03_Throws()
-        {
-            // Creating our IServiceProvider, and retrieving our ISignaler.
-            var kernel = Initialize();
-            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-
-            // Pushing some string unto our stack.
-            signaler.Push("its-name", "its-value");
-
-            // Popping it off again.
-            signaler.Pop();
-
-            // Asserts.
-            Assert.Throws<ArgumentException>(() => signaler.Peek<string>("its-name"));
-        }
-
-        [Fact]
-        public void StackTest_04()
-        {
-            // Creating our IServiceProvider, and retrieving our ISignaler.
-            var kernel = Initialize();
-            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-
-            // Pushing some string unto our stack.
-            signaler.Push("value", "hello world");
-
-            var result = new Node();
-            signaler.Signal("stack.test", result);
+            var result = new Node("stack.test");
+            signaler.Scope("value", "hello world", () => signaler.Signal(result));
 
             // Asserts.
             Assert.Equal("hello world", result.Value);
@@ -117,21 +73,28 @@ namespace magic.signals.tests
             var configuration = new ConfigurationBuilder().Build();
             var services = new ServiceCollection();
             services.AddTransient<IConfiguration>((svc) => configuration);
-            var type = typeof(ISlot);
+
+            // Initializing slots, first by making sure we retrieve all classes implementin ISlot, and having 
+            // the SlotAttribute declared as an attribute.
             var slots = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) &&
+                .Where(p => typeof(ISlot).IsAssignableFrom(p) &&
                     !p.IsInterface &&
                     !p.IsAbstract &&
                     p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
+
+            // Adding each slot type as a transient service.
             foreach (var idx in slots)
             {
                 services.AddTransient(idx);
             }
-            services.AddSingleton<ISignalsProvider>((svc) => new services.SignalsProvider(slots));
-            services.AddTransient<ISignaler, services.Signaler>();
-            var provider = services.BuildServiceProvider();
-            return provider;
+
+            // Making sure we use the default ISignalsProvider and ISignaler services.
+            services.AddSingleton<ISignalsProvider>((svc) => new SignalsProvider(slots));
+            services.AddTransient<ISignaler, Signaler>();
+
+            // Building and returning service provider to caller.
+            return services.BuildServiceProvider();
         }
 
         #endregion

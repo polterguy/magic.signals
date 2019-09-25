@@ -3,7 +3,6 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -15,7 +14,7 @@ namespace magic.signals.tests.slots
     {
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Children.First().Value = input.Children.First().Get<string>() + "Yup!";
+            input.Value = input.Get<string>() + "world";
         }
     }
 }

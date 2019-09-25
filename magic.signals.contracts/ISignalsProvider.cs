@@ -18,7 +18,7 @@ namespace magic.signals.contracts
         /// </summary>
         /// <param name="name">Slot name for the type to return.</param>
         /// <returns></returns>
-        Type GetSignaler(string name);
+        Type GetSlot(string name);
 
         /// <summary>
         /// Returns all keys, implying names registered for your signals implementation.

@@ -10,13 +10,20 @@ using magic.signals.contracts;
 
 namespace magic.signals.services
 {
-    /*
-     * Implementation service class for the ISignalsProvider interface.
-     */
+    /// <summary>
+    /// Implementation service class for the ISignalsProvider interface.
+    /// </summary>
     public class SignalsProvider : ISignalsProvider
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
 
+        #region [ -- Interface implementation -- ]
+
+        /// <summary>
+        /// Creates an instance of the signals provider class, 
+        /// </summary>
+        /// <param name="types">Types to initially use for resolving slots. Notice, each type has to have at least one Slot attribute, declaring
+        /// the name of the slot.</param>
         public SignalsProvider(IEnumerable<Type> types)
         {
             foreach (var idxType in types)
@@ -34,12 +41,22 @@ namespace magic.signals.services
             }
         }
 
+        /// <summary>
+        /// Returns all slots, or rather all slot names to be specific.
+        /// </summary>
         public IEnumerable<string> Keys => _slots.Keys;
 
-        public Type GetSignaler(string name)
+        /// <summary>
+        /// Returns the slot with the specified name.
+        /// </summary>
+        /// <param name="name">Name for slot to retrieve.</param>
+        /// <returns></returns>
+        public Type GetSlot(string name)
         {
             _slots.TryGetValue(name, out Type result);
             return result;
         }
+
+        #endregion
     }
 }

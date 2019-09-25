@@ -3,8 +3,8 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using magic.node;
-using System.Collections.Generic;
 
 namespace magic.signals.contracts
 {
@@ -14,23 +14,19 @@ namespace magic.signals.contracts
     public interface ISignaler
     {
         /// <summary>
-        /// Signals the slot with the specified name.
+        /// Signals the slot with the name from the input node's Name property.
         /// </summary>
-        /// <param name="name">Name of slot to signal</param>
         /// <param name="input">Input arguments to slot</param>
-        void Signal(string name, Node input);
+        void Signal(Node input);
 
         /// <summary>
-        /// Returns a list of all registered slots in the AppDomain.
+        /// Adds the given stack value unto the stack with the given name, and invokes functor,
+        /// making sure the object is popped from the stack after the functor has been evaluated.
         /// </summary>
-        IEnumerable<string> Slots { get; }
-
-        /// <summary>
-        /// Pushes an object unto the stack of the signaler.
-        /// </summary>
-        /// <param name="name">Name to later reference the object by.</param>
-        /// <param name="value">the actual object to push unto the stack.</param>
-        void Push(string name, object value);
+        /// <param name="name">Name of stack object, allowing you to retrieve it from recursively invoked slots</param>
+        /// <param name="value">Value of stack object. Use Peek to retrieve the object in recursively invoked slots.</param>
+        /// <param name="functor">Callback evaluated while object is on the stack</param>
+        void Scope(string name, object value, Action functor);
 
         /// <summary>
         /// Returns the last stack object previously pushed with the spcified name.
@@ -39,11 +35,5 @@ namespace magic.signals.contracts
         /// <param name="name">Name of stack object to retrieve</param>
         /// <returns></returns>
         T Peek<T>(string name) where T : class;
-
-        /// <summary>
-        /// Pops the last stack object pushed with the specified name.
-        /// </summary>
-        /// <param name="name">Name o fstack object to pop</param>
-        void Pop();
     }
 }
