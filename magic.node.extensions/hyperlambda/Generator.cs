@@ -5,13 +5,14 @@
 
 using System.Text;
 using System.Collections.Generic;
+using magic.node.extensions.hyperlambda.internals;
 
 namespace magic.node.extensions.hyperlambda
 {
     /// <summary>
     /// Class to help convert a bunch of nodes into its Hyperlambda (text) representation.
     /// </summary>
-    public sealed class Stringifier
+    public sealed class Generator
     {
         /// <summary>
         /// Returns the Hyperlambda/string representation of the given list of nodes.
@@ -47,7 +48,7 @@ namespace magic.node.extensions.hyperlambda
 
                 if (idx.Value != null)
                 {
-                    var value = Converter.ConvertToString(idx, out string type);
+                    var value = TypeConverter.ConvertToString(idx, out string type);
                     builder.Append(":");
                     if (!string.IsNullOrEmpty(type) && type != "string")
                         builder.Append(type + ":");

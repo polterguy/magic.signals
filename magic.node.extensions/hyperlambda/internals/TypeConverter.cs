@@ -7,19 +7,16 @@ using System;
 using System.Globalization;
 using magic.node.expressions;
 
-namespace magic.node.extensions.hyperlambda
+namespace magic.node.extensions.hyperlambda.internals
 {
-    /// <summary>
-    /// Helper class for converting from string representations to Hyperlambda declaration objects, and vice versa.
-    /// </summary>
-    public static class Converter
+    /*
+     * Helper class for converting from string representations to Hyperlambda declaration objects, and vice versa.
+     */
+    internal static class TypeConverter
     {
-        /// <summary>
-        /// Converts the given string value to the type declaration specified as the type parameter.
-        /// </summary>
-        /// <param name="value">String representation of value</param>
-        /// <param name="type">Type to convert to, e.g. 'string', 'int', etc.</param>
-        /// <returns>The converted native type according to your type parameter.</returns>
+        /*
+         * Converts the given string value to the type declaration specified as the type parameter.
+         */
         public static object ConvertFromString(string value, string type)
         {
             switch (type)
@@ -75,13 +72,10 @@ namespace magic.node.extensions.hyperlambda
             }
         }
 
-        /// <summary>
-        /// Converts the given Node's value to its string representation, in addition to returning its
-        /// type information
-        /// </summary>
-        /// <param name="node">Node to retrieve value from</param>
-        /// <param name="type">Output parameter declaring its type declaration in string format.</param>
-        /// <returns>String representation of value from spceified node.</returns>
+        /*
+         * Converts the given Node's value to its string representation, in addition to returning its
+         * type information.
+         */
         public static string ConvertToString(Node node, out string type)
         {
             string value = null;
@@ -165,7 +159,7 @@ namespace magic.node.extensions.hyperlambda
 
                 case "magic.node.Node":
                     type = "node";
-                    value = "@\"" + Stringifier.GetHyper(node.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
+                    value = "@\"" + Generator.GetHyper(node.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
                     break;
 
                 default:

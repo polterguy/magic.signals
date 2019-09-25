@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
+using magic.node.extensions.hyperlambda.internals;
 
 namespace magic.node.extensions.hyperlambda
 {
@@ -142,7 +143,7 @@ namespace magic.node.extensions.hyperlambda
                             }
                             else
                             {
-                                idxNode.Value = Converter.ConvertFromString(token, idxNode.Get<string>());
+                                idxNode.Value = TypeConverter.ConvertFromString(token, idxNode.Get<string>());
                             }
                         }
                         previous = token;

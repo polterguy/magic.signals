@@ -7,9 +7,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using magic.utils;
+using magic.node.extensions.utils;
 
-namespace magic.node.extensions.hyperlambda
+namespace magic.node.extensions.hyperlambda.internals
 {
     /*
      * Internal tokenizer class, for tokenizing a stream of characters into tokens

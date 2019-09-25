@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using magic.utils;
 
 namespace magic.node.expressions
 {
@@ -101,10 +100,6 @@ namespace magic.node.expressions
                         {
                             yield return new Iterator(builder.ToString());
                             builder.Clear();
-                        }
-                        else if (idx == '"' && builder.Length == 0)
-                        {
-                            yield return new Iterator(StringLiteralParser.ReadQuotedString(reader));
                         }
                         else
                         {
