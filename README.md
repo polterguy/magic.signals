@@ -1,5 +1,5 @@
 
-# Magic Signals .Net
+# Magic Signals for .Net
 
 [![Build status](https://travis-ci.org/polterguy/magic.signals.svg?master)](https://travis-ci.org/polterguy/magic.signals)
 
@@ -32,7 +32,7 @@ var pars = new Node("foo.bar");
 signaler.Signal(pars);
 
 /*
- * The value of pars is now 42
+ * The value of pars is now 42.
  */
 Assert.Equal(42, pars.Value);
 ```
@@ -55,7 +55,7 @@ such as for instance `System.String`, `System.DateTime`, integers, etc. However,
 easily be represented using this `Node` class. The Node class is basically a name/value/children graph object, where
 the value can be any object, the name a string, and children is a list of children Nodes. In such a way, it provides
 a more C# friendly graph object, kind of resembling JSON, allowing you to internally within your assemblies, pass
-in a Node object as your parameters form the point you signal, to the slot where you handle the signal.
+in a Node object as your parameters from the point of your signal, to the slot where you handle the signal.
 
 ## Magic Signals a DSL
 
@@ -63,3 +63,10 @@ A lot of the idea behind Magic Signals is that combined with [Magic Node](https:
 and espcially its ability to parse _"Hyperlambda"_, it becomes a very good foundation for a DSL, or a Domain Specific
 programming Language implementation, allowing you to easily create your own programming languages, and keywords,
 based upon Hyperlambda syntax trees.
+
+## License
+
+Magic Signals is licensed as Affero GPL. This means that you can only use it to create Open Source solutions.
+If this is a problem, you can contact at thomas@gaiasoul.com me to negotiate a proprietary license if
+you want to use it to build closed source code. This will allow you to use it in closed
+source projects.
