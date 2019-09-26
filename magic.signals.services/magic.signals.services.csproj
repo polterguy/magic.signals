@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>A Super Signals implementation allowing you to invoke functionality from other assemblies, without any direct references between the caller and the callee</Description>
+    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
+    <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\projects\personal\magic.signals\magic.signals.services\magic.signals.services.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
