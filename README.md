@@ -1,13 +1,14 @@
 
-# Magic Signals ASP.NET Core
+# Magic Signals .Net
 
 [![Build status](https://travis-ci.org/polterguy/magic.signals.svg?master)](https://travis-ci.org/polterguy/magic.signals)
 
-Magic signals is a _"Super Signals"_ implementation for .Net Core, allowing you to invoke functions from one assembly
-in another assembly without having any direct references between the projects.
+Magic Signals is a _"Super Signals"_ implementation for .Net Core built on top of [Magic Node](https://github.com/polterguy/magic.node),
+allowing you to invoke functions from one assembly in another assembly without having any direct references between the projects.
 
-This is made possible by having a YALOA, allowing us to invoke methods in other classes, through a _"magic string"_,
-which references a type, in a dictionary, where the string is its key. Imagine the following code.
+This is made possible by always having a YALOA, allowing us to invoke methods in classes to the caller, through a _"magic string"_,
+which references a type, in a dictionary, where the string is its key, and the types are dynamically load up during startup
+of your AppDomain. Imagine the following code.
 
 ```csharp
 [Slot(Name = "foo.bar")]
@@ -24,17 +25,24 @@ The above declares a _"slot"_ for the signal **[foo.bar]**. In any other place i
 instance to Signal the above slot by using something such as the following.
 
 ```csharp
-signaler.Signal("foo.bar", input);
-```
+/*
+ * This will invoke our Signal method above.
+ */
+var pars = new Node("foo.bar");
+signaler.Signal(pars);
 
-After the invocation to the above `Signal`, the value of our node will be 42.
+/*
+ * The value of pars is now 42
+ */
+Assert.Equal(42, pars.Value);
+```
 
 Notice that there are no shared types between the invoker and the handler, and there are no references necessary to
 be shared between these two assemblies. This results in an extremely loosely coupled plugin architecture, where you can
 dynamically add any plugin you wish into your AppDomain, by simply referencing whatever plugin assembly you
-wish to bring into your AppDomain, and immediately start consuming your plugin functionality.
+wish to bring into your AppDomain, and immediately start consuming your plugin's functionality.
 
-Tha Magic Signals implementation uses `IServiceProvider` to instantiate your above `FooBar` class when it
+The Magic Signals implementation uses `IServiceProvider` to instantiate your above `FooBar` class when it
 wants to evaluate your slot. This makes it behave as a good IoC citizen, allowing you to pass in for instance
 interfaces into your constructor, and have the .Net Core dependency injection automatically create objects
 of whatever interface your slot implementation requires.
@@ -48,3 +56,10 @@ easily be represented using this `Node` class. The Node class is basically a nam
 the value can be any object, the name a string, and children is a list of children Nodes. In such a way, it provides
 a more C# friendly graph object, kind of resembling JSON, allowing you to internally within your assemblies, pass
 in a Node object as your parameters form the point you signal, to the slot where you handle the signal.
+
+## Magic Signals a DSL
+
+A lot of the idea behind Magic Signals is that combined with [Magic Node](https://github.com/polterguy/magic.node),
+and espcially its ability to parse _"Hyperlambda"_, it becomes a very good foundation for a DSL, or a Domain Specific
+programming Language implementation, allowing you to easily create your own programming languages, and keywords,
+based upon Hyperlambda syntax trees.
