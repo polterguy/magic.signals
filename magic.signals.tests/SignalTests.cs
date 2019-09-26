@@ -21,7 +21,7 @@ namespace magic.signals.tests
     public class SignalTests
     {
         [Fact]
-        public void Signal()
+        public void Signal_01()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
@@ -32,6 +32,23 @@ namespace magic.signals.tests
 
             // Signaling the 'foo.bar' slot with the given arguments.
             signaler.Signal(input);
+
+            // Asserts.
+            Assert.Equal("hello world", input.Get<string>());
+        }
+
+        [Fact]
+        public void Signal_02()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Creating some arguments for our signal.
+            var input = new Node("", "hello ");
+
+            // Signaling the 'foo.bar' slot with the given arguments.
+            signaler.Signal("foo.bar", input);
 
             // Asserts.
             Assert.Equal("hello world", input.Get<string>());

@@ -16,8 +16,15 @@ namespace magic.signals.contracts
         /// <summary>
         /// Signals the slot with the name from the input node's Name property.
         /// </summary>
-        /// <param name="input">Input arguments to slot</param>
+        /// <param name="input">Input arguments to slot, including its name as name of node.</param>
         void Signal(Node input);
+
+        /// <summary>
+        /// Signals the slot with the name from the input node's Name property.
+        /// </summary>
+        /// <param name="name">Name of slot to invoke.</param>
+        /// <param name="input">Input arguments to slot.</param>
+        void Signal(string name, Node input);
 
         /// <summary>
         /// Adds the given stack value unto the stack with the given name, and invokes functor,

@@ -6,6 +6,8 @@
     <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
     <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Thomas Hansen</Authors>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

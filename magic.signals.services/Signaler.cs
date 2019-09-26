@@ -40,9 +40,20 @@ namespace magic.signals.services
         /// <param name="input">Parameters to slot.</param>
         public void Signal(Node input)
         {
-            var type = _signals.GetSlot(input.Name);
+            Signal(input.Name, input);
+        }
+
+        /// <summary>
+        /// Invokes the slot with the specified name,
+        /// passing in the node itself as arguments to the slot.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="input"></param>
+        public void Signal(string name, Node input)
+        {
+            var type = _signals.GetSlot(name);
             if (type == null)
-                throw new ApplicationException($"No slot exists for [{input.Name}]");
+                throw new ApplicationException($"No slot exists for [{name}]");
 
             var instance = _provider.GetService(type) as ISlot;
             instance.Signal(this, input);
