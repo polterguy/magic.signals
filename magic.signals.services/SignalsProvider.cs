@@ -10,8 +10,9 @@ using magic.signals.contracts;
 
 namespace magic.signals.services
 {
+    // TODO: Turn into Lazy singleton implementation, if possible.
     /// <summary>
-    /// Implementation service class for the ISignalsProvider interface.
+    /// Default implementation service class for the ISignalsProvider contract/interface.
     /// </summary>
     public class SignalsProvider : ISignalsProvider
     {
@@ -20,7 +21,8 @@ namespace magic.signals.services
         #region [ -- Interface implementation -- ]
 
         /// <summary>
-        /// Creates an instance of the signals provider class, 
+        /// Creates an instance of the signals provider class. Notice, this should normally be associated
+        /// with your IoC container as a Singleton instance somehow.
         /// </summary>
         /// <param name="types">Types to initially use for resolving slots. Notice, each type has to have at least one Slot attribute, declaring
         /// the name of the slot.</param>

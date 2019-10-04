@@ -8,10 +8,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Thomas Hansen</Authors>
     <Version>1.0.1</Version>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/polterguy/magic.signals/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://polterguy.github.com/favicon.ico</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.services.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard2.0/magic.node.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

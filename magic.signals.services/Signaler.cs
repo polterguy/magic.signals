@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.signals.services
 {
     /// <summary>
-    /// Implementation service class for the ISgnaler interface.
+    /// Default implementation service class for the ISignaler contract/interface.
     /// </summary>
     public class Signaler : ISignaler
     {
@@ -51,10 +51,7 @@ namespace magic.signals.services
         /// <param name="input"></param>
         public void Signal(string name, Node input)
         {
-            var type = _signals.GetSlot(name);
-            if (type == null)
-                throw new ApplicationException($"No slot exists for [{name}]");
-
+            var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var instance = _provider.GetService(type) as ISlot;
             instance.Signal(this, input);
         }

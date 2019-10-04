@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.contracts.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard2.0/magic.node.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

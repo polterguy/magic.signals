@@ -21,7 +21,7 @@ namespace magic.signals.tests
     public class SignalTests
     {
         [Fact]
-        public void Signal_01()
+        public void SignalWithoutName()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
@@ -38,7 +38,7 @@ namespace magic.signals.tests
         }
 
         [Fact]
-        public void Signal_02()
+        public void SignalWithName()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();

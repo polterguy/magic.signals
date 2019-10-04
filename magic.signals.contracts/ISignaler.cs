@@ -30,16 +30,16 @@ namespace magic.signals.contracts
         /// Adds the given stack value unto the stack with the given name, and invokes functor,
         /// making sure the object is popped from the stack after the functor has been evaluated.
         /// </summary>
-        /// <param name="name">Name of stack object, allowing you to retrieve it from recursively invoked slots</param>
+        /// <param name="name">Name of stack object, allowing you to retrieve it from recursively invoked slots.</param>
         /// <param name="value">Value of stack object. Use Peek to retrieve the object in recursively invoked slots.</param>
-        /// <param name="functor">Callback evaluated while object is on the stack</param>
+        /// <param name="functor">Callback evaluated while object is on the stack.</param>
         void Scope(string name, object value, Action functor);
 
         /// <summary>
         /// Returns the last stack object previously pushed with the spcified name.
         /// </summary>
-        /// <typeparam name="T">Type to return object as</typeparam>
-        /// <param name="name">Name of stack object to retrieve</param>
+        /// <typeparam name="T">Type to return object as.</typeparam>
+        /// <param name="name">Name of stack object to retrieve.</param>
         /// <returns></returns>
         T Peek<T>(string name) where T : class;
     }
