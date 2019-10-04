@@ -2,18 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>A Super Signals implementation allowing you to invoke functionality from other assemblies, without any direct references between the caller and the callee</Description>
-    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
-    <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>magic.signals</PackageId>
     <Authors>Thomas Hansen</Authors>
-    <Version>1.0.1</Version>
+    <Company>Thomas Hansen</Company>
+    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
+    <Description>A Super Signals implementation for Magic built on magic.node.</Description>
+    <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/polterguy/magic.signals/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>https://polterguy.github.com/favicon.ico</PackageIconUrl>
+    <PackageIconUrl>https://polterguy.github.io/favicon.ico</PackageIconUrl>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>1.1.0</PackageVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/polterguy/magic.signals.git</RepositoryUrl>
+    <PackageTags>signals, active events, events, DSL, scripting, dynamic, function, invocation, functional</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard2.0/magic.node.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.services.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
