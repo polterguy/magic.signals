@@ -2,6 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>magic.signals.contracts</PackageId>
+    <Authors>Thomas Hansen</Authors>
+    <Company>Thomas Hansen</Company>
+    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
+    <Description>Contracts for magic.signals, a Super Signals implementation for Magic built on magic.node.</Description>
+    <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/polterguy/magic.signals/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://polterguy.github.io/favicon.ico</PackageIconUrl>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>1.1.2</PackageVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/polterguy/magic.signals.git</RepositoryUrl>
+    <PackageTags>signals, active events, events, DSL, scripting, dynamic, function, invocation, functional</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -9,6 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.node" Version="1.0.0" />
+    <PackageReference Include="magic.node" Version="1.1.0" />
   </ItemGroup>
 </Project>
