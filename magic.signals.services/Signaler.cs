@@ -5,7 +5,11 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using magic.node;
 using magic.signals.contracts;
 
@@ -16,6 +20,9 @@ namespace magic.signals.services
     /// </summary>
     public class Signaler : ISignaler
     {
+        static readonly DateTime _startupTime = DateTime.Now;
+        static readonly object _locker = new object();
+        static bool? _canRaiseSignals;
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
         readonly List<Tuple<string, object>> _stack = new List<Tuple<string, object>>();
@@ -51,6 +58,9 @@ namespace magic.signals.services
         /// <param name="input"></param>
         public void Signal(string name, Node input)
         {
+            if (!CanRaiseSignals())
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://github.com/polterguy/magic if you wish to continue using Magic.");
+
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var instance = _provider.GetService(type) as ISlot;
             instance.Signal(this, input);
@@ -92,6 +102,112 @@ namespace magic.signals.services
         {
             return _stack.AsEnumerable().Reverse().FirstOrDefault(x => x.Item1 == name)?.Item2 as T ??
                 throw new NullReferenceException($"No stack object named '{name}' found");
+        }
+
+        #endregion
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Returns a boolean indicating if caller is allowed to raise signals
+         * or not.
+         */
+        bool CanRaiseSignals()
+        {
+            return _canRaiseSignals.HasValue ? _canRaiseSignals.Value : HasValidLicense();
+        }
+
+        /*
+         * This is our license checker logic, that will check to see if caller
+         * has a valid license or not.
+         */
+        bool HasValidLicense()
+        {
+            /*
+             * We only check if license is valid 5 hours after the first
+             * signal has been raised. This gives the user a 5 hours
+             * long "trial period" before the application stops working.
+             */
+            if (DateTime.Now < _startupTime.AddHours(5))
+                return true;
+
+            // Checking if this instance has an HTTP context.
+            var contextAccessor = _provider.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+            if (contextAccessor?.HttpContext?.Request == null)
+            {
+                /*
+                 * This is not an HTTP context, hence we allow all usage.
+                 *
+                 * Notice, we still don't set the _canRaiseSignals boolean field,
+                 * since it might just be a thread outside of the HTTP context
+                 * doing the current invocation, and other HTTP context signals
+                 * might be raised later.
+                 */
+                return true;
+            }
+
+            // Retrieving the Host HTTP header of the current request.
+            var host = contextAccessor.HttpContext.Request.Host.Host;
+
+            /*
+             * Checking if the Host header is a localhost domain of some sort,
+             * at which point we allow for fallthrough, raising all signals,
+             * to avoid having to create a license file for localhost development.
+             */
+            if (host == "localhost")
+            {
+                /*
+                 * This is a localhost type of access.
+                 *
+                 * Notice, we still don't set the _canRaiseSignals boolean field,
+                 * since it might just be one invocation from the localhost
+                 * computer, and other types of requests might come up later,
+                 * with an "real" hostname.
+                 */
+                return true;
+            }
+
+            /*
+             * Now we know it's more than 5 hours since the AppDomain raised
+             * its first signal, we know we have an HTTP context, with a Host
+             * header, that is not "localhost" - Hence, we can check if the
+             * caller has a valid license file, and if not, we turn off all
+             * signals from now on an onwards.
+             *
+             * But as we do, we have to synchronize access to our shared resource.
+             */
+            lock(_locker)
+            {
+                // To avoid multiple threads executing the same logic.
+                if (_canRaiseSignals.HasValue)
+                    return _canRaiseSignals.Value;
+
+                // Checking if there even exists a configuration setting.
+                var configuration = _provider.GetService(typeof(IConfiguration)) as IConfiguration;
+                var license = configuration["license"];
+                if (license == null)
+                {
+                    // No license settings in configuration file.
+                    _canRaiseSignals = false;
+                    return false;
+                }
+
+                // Checking if current domain has a valid license.
+                var domainSecret = host + "thomas hansen is cool";
+                using (var sha = SHA256.Create())
+                {
+                    var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(domainSecret));
+                    var hash = BitConverter.ToString(hashBytes).Replace("-","").ToLowerInvariant();
+                    var domains = license.Split(',');
+                    if (domains.Any(x => x.Trim() == domainSecret))
+                    {
+                        // Yup, we have a valid license!
+                        _canRaiseSignals = true;
+                        return true;
+                    }
+                }
+            }
+            return true;
         }
 
         #endregion
