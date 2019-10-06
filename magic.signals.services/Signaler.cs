@@ -92,16 +92,15 @@ namespace magic.signals.services
         }
 
         /// <summary>
-        /// Retrieves the last stack object pushed unto the stack with the specified name. Will
-        /// throw a null reference exception if the specified stack object is not found.
+        /// Retrieves the last stack object pushed unto the stack with the specified name.
         /// </summary>
-        /// <typeparam name="T">Type to return stack object as. Notice, no conversion will be attempted. Make sure you use the correct type.</typeparam>
+        /// <typeparam name="T">Type to return stack object as. Notice, no conversion will be attempted.
+        /// Make sure you use the correct type when retrieving your stack object.</typeparam>
         /// <param name="name">Name stack object was pushed as.</param>
-        /// <returns></returns>
+        /// <returns>The first stack object with the specified name, or null if none are found.</returns>
         public T Peek<T>(string name) where T : class
         {
-            return _stack.AsEnumerable().Reverse().FirstOrDefault(x => x.Item1 == name)?.Item2 as T ??
-                throw new NullReferenceException($"No stack object named '{name}' found");
+            return _stack.AsEnumerable().Reverse().FirstOrDefault(x => x.Item1 == name)?.Item2 as T;
         }
 
         #endregion
