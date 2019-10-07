@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 using magic.node;
 
 namespace magic.signals.contracts
@@ -25,6 +26,21 @@ namespace magic.signals.contracts
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
         void Signal(string name, Node input);
+
+        /// <summary>
+        /// Signals the slot with the name from the input node's Name property asynchronously.
+        /// </summary>
+        /// <param name="input">Input arguments to slot, including its name as name of node.</param>
+        /// <returns>Awaiatable task.</returns>
+        Task SignalAsync(Node input);
+
+        /// <summary>
+        /// Signals the slot with the name from the input node's Name property asynchronously.
+        /// </summary>
+        /// <param name="name">Name of slot to invoke.</param>
+        /// <param name="input">Input arguments to slot.</param>
+        /// <returns>Awaitable task.</returns>
+        Task SignalAsync(string name, Node input);
 
         /// <summary>
         /// Adds the given stack value unto the stack with the given name, and invokes functor,

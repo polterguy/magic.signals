@@ -30,15 +30,19 @@ namespace magic.signals.services
         {
             foreach (var idxType in types)
             {
-                foreach (var idxAtrName in idxType.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
+                foreach (var idxAtr in idxType.GetCustomAttributes(true).OfType<SlotAttribute>())
                 {
-                    if (string.IsNullOrEmpty(idxAtrName))
+                    // some basic sanity checking.
+                    if (string.IsNullOrEmpty(idxAtr.Name))
                         throw new ArgumentNullException($"No name specified for type '{idxType}' in Slot attribute");
 
-                    if (_slots.ContainsKey(idxAtrName))
-                        throw new ApplicationException($"Slot [{idxAtrName}] already taken by another type");
+                    if (!typeof(ISlotAsync).IsAssignableFrom(idxType) && !typeof(ISlot).IsAssignableFrom(idxType))
+                        throw new ApplicationException($"{idxType.FullName} is marked as a slot, but does not implement {nameof(ISlotAsync)} or {nameof(ISlot)}");
 
-                    _slots[idxAtrName] = idxType;
+                    if (_slots.ContainsKey(idxAtr.Name))
+                        throw new ApplicationException($"Slot [{idxAtr.Name}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr.Name].FullName}.");
+
+                    _slots[idxAtr.Name] = idxType;
                 }
             }
         }
@@ -52,7 +56,7 @@ namespace magic.signals.services
         /// Returns the slot with the specified name.
         /// </summary>
         /// <param name="name">Name for slot to retrieve.</param>
-        /// <returns></returns>
+        /// <returns>Type implementing slot.</returns>
         public Type GetSlot(string name)
         {
             _slots.TryGetValue(name, out Type result);

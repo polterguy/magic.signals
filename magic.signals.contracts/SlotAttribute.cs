@@ -17,5 +17,10 @@ namespace magic.signals.contracts
         /// Name of slot.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Whether or not slot is async or not. The default is false.
+        /// </summary>
+        public bool Async { get; set; }
     }
 }

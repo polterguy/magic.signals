@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
@@ -44,7 +45,7 @@ namespace magic.signals.services
         /// Invokes the slot specified in the name property of the input node,
         /// passing in the node itself as arguments to the slot.
         /// </summary>
-        /// <param name="input">Parameters to slot.</param>
+        /// <param name="input">Parameters to slot, including name of slot.</param>
         public void Signal(Node input)
         {
             Signal(input.Name, input);
@@ -54,16 +55,55 @@ namespace magic.signals.services
         /// Invokes the slot with the specified name,
         /// passing in the node itself as arguments to the slot.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="input"></param>
+        /// <param name="name">Name of slot to invoke.</param>
+        /// <param name="input">Arguments being passed in to slot.</param>
         public void Signal(string name, Node input)
         {
             if (!CanRaiseSignals())
                 throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://github.com/polterguy/magic if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
-            var instance = _provider.GetService(type) as ISlot;
+            var raw = _provider.GetService(type);
+
+            // Basic sanity checking.
+            var instance = raw as ISlot;
+            if (instance == null && raw is ISlotAsync)
+                throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it as a normal slot. Please invoke it asynchronously.");
+
             instance.Signal(this, input);
+        }
+
+        /// <summary>
+        /// Invokes the slot specified in the name property of the input node asynchronously,
+        /// passing in the node itself as arguments to the slot.
+        /// </summary>
+        /// <param name="input">Parameters to slot, including name of slot.</param>
+        /// <returns>Awaitable task.</returns>
+        public Task SignalAsync(Node input)
+        {
+            return SignalAsync(input.Name, input);
+        }
+
+        /// <summary>
+        /// Invokes the slot with the specified name,
+        /// passing in the node itself as arguments to the slot.
+        /// </summary>
+        /// <param name="name">Name of slot to invoke.</param>
+        /// <param name="input">Arguments being passed in to slot.</param>
+        public Task SignalAsync(string name, Node input)
+        {
+            if (!CanRaiseSignals())
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://github.com/polterguy/magic if you wish to continue using Magic.");
+
+            var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
+            var raw = _provider.GetService(type);
+
+            // Basic sanity checking.
+            var instance = raw as ISlotAsync;
+            if (instance == null && raw is ISlot)
+                throw new ApplicationException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
+
+            return instance.SignalAsync(this, input);
         }
 
         /// <summary>

@@ -80,6 +80,21 @@ namespace magic.signals.tests
             Assert.Equal("hello world", result.Value);
         }
 
+        [Fact]
+        public async void AsyncSignal()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            var result = new Node("", "hello ");
+            await signaler.SignalAsync("foo.bar.async", result);
+
+            // Asserts.
+            Assert.Equal("hello world", result.Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         /*
@@ -95,7 +110,7 @@ namespace magic.signals.tests
             // the SlotAttribute declared as an attribute.
             var slots = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => typeof(ISlot).IsAssignableFrom(p) &&
+                .Where(p => (typeof(ISlot).IsAssignableFrom(p) || typeof(ISlotAsync).IsAssignableFrom(p)) &&
                     !p.IsInterface &&
                     !p.IsAbstract &&
                     p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
