@@ -8,7 +8,9 @@ using magic.node;
 namespace magic.signals.contracts
 {
     /// <summary>
-    /// Interface you need to implement on classe syou want to be able to dynamically invoke as signals.
+    /// Interface you need to implement on classes you want to be able to
+    /// dynamically invoke as signals. Notice, there exists an async version
+    /// of this interface, which you can implement for async signals.
     /// </summary>
     public interface ISlot
     {

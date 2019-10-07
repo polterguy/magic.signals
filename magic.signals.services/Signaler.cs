@@ -21,7 +21,6 @@ namespace magic.signals.services
     /// </summary>
     public class Signaler : ISignaler
     {
-        static readonly DateTime _startupTime = DateTime.Now;
         static readonly object _locker = new object();
         static bool? _canRaiseSignals;
         readonly IServiceProvider _provider;
@@ -42,16 +41,6 @@ namespace magic.signals.services
         #region [ -- Interface implementation -- ]
 
         /// <summary>
-        /// Invokes the slot specified in the name property of the input node,
-        /// passing in the node itself as arguments to the slot.
-        /// </summary>
-        /// <param name="input">Parameters to slot, including name of slot.</param>
-        public void Signal(Node input)
-        {
-            Signal(input.Name, input);
-        }
-
-        /// <summary>
         /// Invokes the slot with the specified name,
         /// passing in the node itself as arguments to the slot.
         /// </summary>
@@ -60,47 +49,36 @@ namespace magic.signals.services
         public void Signal(string name, Node input)
         {
             if (!CanRaiseSignals())
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://github.com/polterguy/magic if you wish to continue using Magic.");
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://polterguy.github.io if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
-            var instance = raw as ISlot;
-            if (instance == null && raw is ISlotAsync)
-                throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it as a normal slot. Please invoke it asynchronously.");
+            if (!(raw is ISlot instance))
+                throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it async.");
 
             instance.Signal(this, input);
         }
 
         /// <summary>
-        /// Invokes the slot specified in the name property of the input node asynchronously,
-        /// passing in the node itself as arguments to the slot.
-        /// </summary>
-        /// <param name="input">Parameters to slot, including name of slot.</param>
-        /// <returns>Awaitable task.</returns>
-        public Task SignalAsync(Node input)
-        {
-            return SignalAsync(input.Name, input);
-        }
-
-        /// <summary>
         /// Invokes the slot with the specified name,
         /// passing in the node itself as arguments to the slot.
+        /// Notice, the ISlotAsync interface must have been implemented on your type
+        /// to signal it using the async Signal method.
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
         public Task SignalAsync(string name, Node input)
         {
             if (!CanRaiseSignals())
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://github.com/polterguy/magic if you wish to continue using Magic.");
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://polterguy.github.io if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
-            var instance = raw as ISlotAsync;
-            if (instance == null && raw is ISlot)
+            if (!(raw is ISlotAsync instance))
                 throw new ApplicationException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
 
             return instance.SignalAsync(this, input);
@@ -162,14 +140,6 @@ namespace magic.signals.services
          */
         bool HasValidLicense()
         {
-            /*
-             * We only check if license is valid 5 hours after the first
-             * signal has been raised. This gives the user a 5 hours
-             * long "trial period" before the application stops working.
-             */
-            if (DateTime.Now < _startupTime.AddHours(5))
-                return true;
-
             // Checking if this instance has an HTTP context.
             var contextAccessor = _provider.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
             if (contextAccessor?.HttpContext?.Request == null)
@@ -207,8 +177,7 @@ namespace magic.signals.services
             }
 
             /*
-             * Now we know it's more than 5 hours since the AppDomain raised
-             * its first signal, we know we have an HTTP context, with a Host
+             * Now we now we have an HTTP context, with a Host
              * header, that is not "localhost" - Hence, we can check if the
              * caller has a valid license file, and if not, we turn off all
              * signals from now on an onwards.
@@ -223,7 +192,7 @@ namespace magic.signals.services
 
                 // Checking if there even exists a configuration setting.
                 var configuration = _provider.GetService(typeof(IConfiguration)) as IConfiguration;
-                var license = configuration["license"];
+                var license = configuration["magic:license"];
                 if (license == null)
                 {
                     // No license settings in configuration file.
@@ -232,21 +201,21 @@ namespace magic.signals.services
                 }
 
                 // Checking if current domain has a valid license.
-                var domainSecret = host + "thomas hansen is cool";
+                var sec = host + "thomas hansen is cool";
                 using (var sha = SHA256.Create())
                 {
-                    var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(domainSecret));
+                    var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(sec));
                     var hash = BitConverter.ToString(hashBytes).Replace("-","").ToLowerInvariant();
                     var domains = license.Split(',');
-                    if (domains.Any(x => x.Trim() == domainSecret))
+                    if (domains.Any(x => x.Split(':')[1].Trim() == sec))
                     {
                         // Yup, we have a valid license!
                         _canRaiseSignals = true;
                         return true;
                     }
+                    return false; // No valid license!
                 }
             }
-            return true;
         }
 
         #endregion

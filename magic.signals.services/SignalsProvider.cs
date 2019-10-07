@@ -10,7 +10,6 @@ using magic.signals.contracts;
 
 namespace magic.signals.services
 {
-    // TODO: Turn into Lazy singleton implementation, if possible.
     /// <summary>
     /// Default implementation service class for the ISignalsProvider contract/interface.
     /// </summary>
@@ -24,20 +23,21 @@ namespace magic.signals.services
         /// Creates an instance of the signals provider class. Notice, this should normally be associated
         /// with your IoC container as a Singleton instance somehow.
         /// </summary>
-        /// <param name="types">Types to initially use for resolving slots. Notice, each type has to have at least one Slot attribute, declaring
-        /// the name of the slot.</param>
+        /// <param name="types">Types to initially use for resolving slots.
+        /// Notice, each type has to have at least one Slot attribute, declaring
+        /// the name of the slot, and also implement either ISlot or ISlotAsync.</param>
         public SignalsProvider(IEnumerable<Type> types)
         {
             foreach (var idxType in types)
             {
                 foreach (var idxAtr in idxType.GetCustomAttributes(true).OfType<SlotAttribute>())
                 {
-                    // some basic sanity checking.
+                    // Some basic sanity checking.
                     if (string.IsNullOrEmpty(idxAtr.Name))
                         throw new ArgumentNullException($"No name specified for type '{idxType}' in Slot attribute");
 
                     if (!typeof(ISlotAsync).IsAssignableFrom(idxType) && !typeof(ISlot).IsAssignableFrom(idxType))
-                        throw new ApplicationException($"{idxType.FullName} is marked as a slot, but does not implement {nameof(ISlotAsync)} or {nameof(ISlot)}");
+                        throw new ApplicationException($"{idxType.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
 
                     if (_slots.ContainsKey(idxAtr.Name))
                         throw new ApplicationException($"Slot [{idxAtr.Name}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr.Name].FullName}.");

@@ -16,12 +16,8 @@ namespace magic.signals.contracts
     {
         /// <summary>
         /// Signals the slot with the name from the input node's Name property.
-        /// </summary>
-        /// <param name="input">Input arguments to slot, including its name as name of node.</param>
-        void Signal(Node input);
-
-        /// <summary>
-        /// Signals the slot with the name from the input node's Name property.
+        /// Notice, the ISlot interface must have been implemented on your type
+        /// to signal it using the synchronous Signal method.
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
@@ -29,13 +25,8 @@ namespace magic.signals.contracts
 
         /// <summary>
         /// Signals the slot with the name from the input node's Name property asynchronously.
-        /// </summary>
-        /// <param name="input">Input arguments to slot, including its name as name of node.</param>
-        /// <returns>Awaiatable task.</returns>
-        Task SignalAsync(Node input);
-
-        /// <summary>
-        /// Signals the slot with the name from the input node's Name property asynchronously.
+        /// Notice, the ISlotAsync interface must have been implemented on your type
+        /// to signal it using the async Signal method.
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>

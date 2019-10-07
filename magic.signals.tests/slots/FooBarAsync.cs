@@ -10,7 +10,7 @@ using magic.signals.contracts;
 
 namespace magic.signals.tests.slots
 {
-    [Slot(Name = "foo.bar.async", Async = true)]
+    [Slot(Name = "foo.bar.async")]
     public class FooBarAsync : ISlotAsync
     {
         public Task SignalAsync(ISignaler signaler, Node input)

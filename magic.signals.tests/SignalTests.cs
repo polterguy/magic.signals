@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -21,24 +22,7 @@ namespace magic.signals.tests
     public class SignalTests
     {
         [Fact]
-        public void SignalWithoutName()
-        {
-            // Creating our IServiceProvider, and retrieving our ISignaler.
-            var kernel = Initialize();
-            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-
-            // Creating some arguments for our signal.
-            var input = new Node("foo.bar", "hello ");
-
-            // Signaling the 'foo.bar' slot with the given arguments.
-            signaler.Signal(input);
-
-            // Asserts.
-            Assert.Equal("hello world", input.Get<string>());
-        }
-
-        [Fact]
-        public void SignalWithName()
+        public void SignalInputReturn()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
@@ -62,7 +46,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            Assert.Throws<ApplicationException>(() => signaler.Signal(new Node("foo.bar-XXX")));
+            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
         }
 
         [Fact]
@@ -73,15 +57,15 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Pushing some string unto our stack.
-            var result = new Node("stack.test");
-            signaler.Scope("value", "hello world", () => signaler.Signal(result));
+            var result = new Node();
+            signaler.Scope("value", "hello world", () => signaler.Signal("stack.test", result));
 
             // Asserts.
             Assert.Equal("hello world", result.Value);
         }
 
         [Fact]
-        public async void AsyncSignal()
+        public async Task AsyncSignal()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
             var kernel = Initialize();
