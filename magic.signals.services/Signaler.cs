@@ -131,7 +131,7 @@ namespace magic.signals.services
          */
         bool CanRaiseSignals()
         {
-            return _canRaiseSignals.HasValue ? _canRaiseSignals.Value : HasValidLicense();
+            return _canRaiseSignals ?? HasValidLicense();
         }
 
         /*
