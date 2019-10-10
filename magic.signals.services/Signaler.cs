@@ -9,8 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using magic.node;
 using magic.signals.contracts;
 
@@ -21,8 +19,10 @@ namespace magic.signals.services
     /// </summary>
     public class Signaler : ISignaler
     {
-        static readonly object _locker = new object();
         static bool? _canRaiseSignals;
+        static readonly object _locker = new object();
+        static readonly DateTime _startUpTime = DateTime.Now;
+
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
         readonly List<Tuple<string, object>> _stack = new List<Tuple<string, object>>();
@@ -38,6 +38,8 @@ namespace magic.signals.services
             _signals = signals ?? throw new ArgumentNullException(nameof(signals));
         }
 
+        static public string LicenseKey { get; set; }
+
         #region [ -- Interface implementation -- ]
 
         /// <summary>
@@ -49,14 +51,18 @@ namespace magic.signals.services
         public void Signal(string name, Node input)
         {
             if (!CanRaiseSignals())
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://polterguy.github.io if you wish to continue using Magic.");
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://gaiasoul.com/license-magic/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (!(raw is ISlot instance))
-                throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it async.");
+            {
+                if (raw is ISlotAsync)
+                    throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it async.");
+                throw new ApplicationException($"I couldn't find the [{name}] slot, have you registered it?");
+            }
 
             instance.Signal(this, input);
         }
@@ -69,19 +75,23 @@ namespace magic.signals.services
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
-        public Task SignalAsync(string name, Node input)
+        public async Task SignalAsync(string name, Node input)
         {
             if (!CanRaiseSignals())
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://polterguy.github.io if you wish to continue using Magic.");
+                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://gaiasoul.com/license-magic/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (!(raw is ISlotAsync instance))
-                throw new ApplicationException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
+            {
+                if (raw is ISlot)
+                    throw new ApplicationException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
+                throw new ApplicationException($"I couldn't find the [{name}] slot, have you registered it?");
+            }
 
-            return instance.SignalAsync(this, input);
+            await instance.SignalAsync(this, input);
         }
 
         /// <summary>
@@ -140,74 +150,40 @@ namespace magic.signals.services
          */
         bool HasValidLicense()
         {
-            // Checking if this instance has an HTTP context.
-            var contextAccessor = _provider.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
-            if (contextAccessor?.HttpContext?.Request == null)
-            {
-                /*
-                 * This is not an HTTP context, hence we allow all usage.
-                 *
-                 * Notice, we still don't set the _canRaiseSignals boolean field,
-                 * since it might just be a thread outside of the HTTP context
-                 * doing the current invocation, and other HTTP context signals
-                 * might be raised later.
-                 */
-                return true;
-            }
-
-            // Retrieving the Host HTTP header of the current request.
-            var host = contextAccessor.HttpContext.Request.Host.Host;
-
             /*
-             * Checking if the Host header is a localhost domain of some sort,
-             * at which point we allow for fallthrough, raising all signals,
-             * to avoid having to create a license file for localhost development.
+             * We allow the user to use the software for 5 hours
+             * of "trial period".
              */
-            if (host == "localhost")
+            if (string.IsNullOrEmpty(LicenseKey))
             {
-                /*
-                 * This is a localhost type of access.
-                 *
-                 * Notice, we still don't set the _canRaiseSignals boolean field,
-                 * since it might just be one invocation from the localhost
-                 * computer, and other types of requests might come up later,
-                 * with an "real" hostname.
-                 */
-                return true;
+                if (_startUpTime.AddHours(5) > DateTime.Now)
+                    return true; // Trial period is still running ...
+
+                // Trial period is over,and there's no license key.
+                _canRaiseSignals = false;
+                return false;
             }
 
             /*
-             * Now we now we have an HTTP context, with a Host
-             * header, that is not "localhost" - Hence, we can check if the
-             * caller has a valid license file, and if not, we turn off all
-             * signals from now on an onwards.
-             *
-             * But as we do, we have to synchronize access to our shared resource.
+             * Synchronizing access to static shared fields while we check for
+             * a valid license key.
              */
-            lock(_locker)
+            lock (_locker)
             {
-                // To avoid multiple threads executing the same logic.
-                if (_canRaiseSignals.HasValue)
-                    return _canRaiseSignals.Value;
+                // Checking if license key is valid.
+                var licenseEntities = LicenseKey.Split(':');
+                if (licenseEntities.Length != 2)
+                    throw new ApplicationException("Your license must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx'.");
 
-                // Checking if there even exists a configuration setting.
-                var configuration = _provider.GetService(typeof(IConfiguration)) as IConfiguration;
-                var license = configuration["magic:license"];
-                if (license == null)
-                {
-                    // No license settings in configuration file.
-                    _canRaiseSignals = false;
-                    return false;
-                }
-
-                // Checking if current domain has a valid license.
-                var sec = host + "thomas hansen is cool";
+                /*
+                 * Salting hostname parts of license key, hashing it, and
+                 * comparing it to the license key of the license key.
+                 */
                 using (var sha = SHA256.Create())
                 {
-                    var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(sec));
-                    var hash = BitConverter.ToString(hashBytes).Replace("-","").ToLowerInvariant();
-                    var domains = license.Split(',');
-                    if (domains.Any(x => x.Split(':')[1].Trim() == sec))
+                    var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "thomas hansen is cool"));
+                    var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    if (hash == licenseEntities[1])
                     {
                         // Yup, we have a valid license!
                         _canRaiseSignals = true;
