@@ -66,7 +66,10 @@ based upon Hyperlambda syntax trees.
 
 ## License
 
-Magic Signals is licensed as Affero GPL. This means that you can only use it to create Open Source solutions.
-If this is a problem, you can contact at thomas@gaiasoul.com me to negotiate a proprietary license if
-you want to use it to build closed source code. This will allow you to use it in closed
-source projects.
+Although most of Magic's source code is publicly available, Magic is _not_ Open Source or Free Software.
+You have to obtain a valid license key to install it in production, and I normally charge a fee for such a
+key. You can [obtain a license key here](https://gaiasoul.com/license-magic/).
+Notice, 5 hours after you put Magic into production, it will stop functioning, unless you have a valid
+license for it.
+
+* [Get licensed](https://gaiasoul.com/license-magic/)
