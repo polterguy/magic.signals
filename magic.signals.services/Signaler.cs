@@ -38,6 +38,9 @@ namespace magic.signals.services
             _signals = signals ?? throw new ArgumentNullException(nameof(signals));
         }
 
+        /// <summary>
+        /// Sets your license key for current installation.
+        /// </summary>
         static public string LicenseKey { get; set; }
 
         #region [ -- Interface implementation -- ]
@@ -75,6 +78,7 @@ namespace magic.signals.services
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
+        /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(string name, Node input)
         {
             if (!CanRaiseSignals())
@@ -109,6 +113,32 @@ namespace magic.signals.services
             try
             {
                 functor();
+            }
+            finally
+            {
+                var obj = _stack[_stack.Count - 1];
+                _stack.Remove(obj);
+                if (obj is IDisposable disp)
+                    disp.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Pushes the specified object unto the stack with the given key name,
+        /// for then to evaluate the given functor. Useful for evaluating some piece of code
+        /// making sure the evaluation has access to some stack object during its evaluation process.
+        /// </summary>
+        /// <param name="name">Name to push value unto the stack as.</param>
+        /// <param name="value">Actual object to push unto the stack. Notice, object will be automatically disposed at
+        /// the end of the scope if the object implements IDisposable.</param>
+        /// <param name="functor">Callback evaluated while stack object is on the stack.</param>
+        /// <returns>An awaitable task.</returns>
+        public async Task ScopeAsync(string name, object value, Func<Task> functor)
+        {
+            _stack.Add(new Tuple<string, object>(name, value));
+            try
+            {
+                await functor();
             }
             finally
             {
