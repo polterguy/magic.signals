@@ -10,9 +10,12 @@ namespace magic.signals.contracts
 {
     /// <summary>
     /// Interface you need to implement on classes you want to be able to
-    /// dynamically invoke as signals. Notice, there exists a synchronous
-    /// version of this interface for signals you don't want to implement as
-    /// async.
+    /// dynamically invoke as signals.
+    ///
+    /// Notice, there exists a synchronous version of this interface for signals
+    /// you don't want to implement as async. You should as a general rule
+    /// implement also the sync equivalent of this interface, if you implement
+    /// this interface, to allow consumers to also invoke your slot synchronously.
     /// </summary>
     public interface ISlotAsync
     {
