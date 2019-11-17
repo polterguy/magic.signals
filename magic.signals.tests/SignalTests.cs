@@ -93,7 +93,7 @@ namespace magic.signals.tests
             // Initializing slots, first by making sure we retrieve all classes implementin ISlot, and having 
             // the SlotAttribute declared as an attribute.
             var slots = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => !x.IsDynamic && !x.FullName.StartsWith("Microsoft"))
+                .Where(x => !x.IsDynamic && !x.FullName.StartsWith("Microsoft", StringComparison.InvariantCulture))
                 .SelectMany(s => s.GetTypes())
                 .Where(p => (typeof(ISlot).IsAssignableFrom(p) || typeof(ISlotAsync).IsAssignableFrom(p)) &&
                     !p.IsInterface &&
