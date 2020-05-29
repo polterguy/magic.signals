@@ -6,7 +6,14 @@
 Magic Signals is a _"Super Signals"_ implementation for .Net Core built on top of [Magic Node](https://github.com/polterguy/magic.node),
 allowing you to invoke functions from one assembly in another assembly without having any direct references between the projects.
 
-This is made possible by always having a YALOA, allowing us to invoke methods in classes to the caller, through a _"magic string"_,
+## Rationale
+
+Below you can find a couple of articles written about the idea by yours truly.
+
+* [Super Signals - DZone](https://dzone.com/articles/super-signals-in-aspnet-core)
+* [Super Scalable Software Systems](https://dzone.com/articles/the-http-protocol-and-super-scalable-software-syst)
+
+The above is made possible by always having a YALOA, allowing us to invoke methods in classes to the caller, through a _"magic string"_,
 which references a type, in a dictionary, where the string is its key, and the types are dynamically load up during startup
 of your AppDomain. Imagine the following code.
 
@@ -40,12 +47,55 @@ Assert.Equal(42, pars.Value);
 Notice that there are no shared types between the invoker and the handler, and there are no references necessary to
 be shared between these two assemblies. This results in an extremely loosely coupled plugin architecture, where you can
 dynamically add any plugin you wish into your AppDomain, by simply referencing whatever plugin assembly you
-wish to bring into your AppDomain, and immediately start consuming your plugin's functionality.
+wish to bring into your AppDomain, and immediately start consuming your plugin's functionality - Or dynamically loading
+it during runtime for that matter, resulting in that you instantly have access to its slots, without needing to create
+cross projects references in any ways.
 
 The Magic Signals implementation uses `IServiceProvider` to instantiate your above `FooBar` class when it
 wants to evaluate your slot. This makes it behave as a good IoC citizen, allowing you to pass in for instance
 interfaces into your constructor, and have the .Net Core dependency injection automatically create objects
 of whatever interface your slot implementation requires.
+
+### Async
+
+Notice, Magic Signals also allows you to implement the `ISlotAsync` interface, in case you need to implement a
+specific slot async. Normally the convention for cretaing such slots is to prepend them with the word _"wait."_
+in front of their ususal name. Below is an example.
+
+```csharp
+[Slot(Name = "foo.bar")]
+public class FooBar : ISlotAsync
+{
+    public Task SignalAsync(ISignaler signaler, Node input)
+    {
+        input.Value = 42;
+        await Task.Yield();
+    }
+}
+```
+
+It's a common practice to implements slots that recursively invokes other slots, by combining the above two constructs, into
+one single class, using two different names for your slots, depending upon whether or not they're async or not. Below is an
+example.
+
+```csharp
+[Slot(Name = "foo.bar")]
+public class FooBar : ISlot, ISlotAsync
+{
+    // Sync version.
+    public void Signal(ISignaler signaler, Node input)
+    {
+        input.Value = 42;
+    }
+
+    // Async version.
+    public Task SignalAsync(ISignaler signaler, Node input)
+    {
+        input.Value = 42;
+        await Task.Yield();
+    }
+}
+```
 
 ## Passing arguments to your slots
 
