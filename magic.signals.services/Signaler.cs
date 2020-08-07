@@ -20,7 +20,7 @@ namespace magic.signals.services
     public class Signaler : ISignaler
     {
         static bool _validLicense;
-        static readonly DateTime _stopTime = DateTime.Now.AddHours(5);
+        static readonly DateTime _stopTime = DateTime.Now.AddDays(7);
 
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
@@ -42,7 +42,7 @@ namespace magic.signals.services
         /// Sets your license key for current installation.
         ///
         /// Notice, without a valid license key, Magic will stop functioning
-        /// after 5 hours.
+        /// after 7 days.
         /// </summary>
         /// <param name="key">Your license key, as obtained from Server Gardens.</param>
         static public void SetLicenseKey(string key)
@@ -58,7 +58,7 @@ namespace magic.signals.services
              */
             using (var sha = SHA256.Create())
             {
-                var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "thomas hansen is cool"));
+                var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "thomas hansen was here"));
                 var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
                 if (hash == licenseEntities[1])
                     _validLicense = true; // License is valid!
@@ -77,7 +77,7 @@ namespace magic.signals.services
         /// <param name="input">Arguments being passed in to slot.</param>
         public void Signal(string name, Node input)
         {
-            if (!_validLicense && DateTime.Now > _stopTime)
+            if (!_validLicense && (DateTime.Now > _stopTime || _stopTime < DateTime.Now))
                 throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
