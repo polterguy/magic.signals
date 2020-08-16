@@ -20,7 +20,7 @@ namespace magic.signals.services
     public class Signaler : ISignaler
     {
         static bool _validLicense;
-        static readonly DateTime _stopTime = DateTime.Now.AddDays(7);
+        static readonly DateTime _stopTime = DateTime.UtcNow.AddDays(7);
 
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
@@ -77,7 +77,7 @@ namespace magic.signals.services
         /// <param name="input">Arguments being passed in to slot.</param>
         public void Signal(string name, Node input)
         {
-            if (!_validLicense && (DateTime.Now > _stopTime || _stopTime < DateTime.Now))
+            if (!_validLicense && (DateTime.UtcNow > _stopTime || _stopTime < DateTime.UtcNow))
                 throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
@@ -105,7 +105,7 @@ namespace magic.signals.services
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(string name, Node input)
         {
-            if (!_validLicense && DateTime.Now > _stopTime)
+            if (!_validLicense && DateTime.UtcNow > _stopTime)
                 throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
