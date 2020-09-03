@@ -46,7 +46,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+            Assert.Throws<ArgumentException>(() => signaler.Signal("foo.bar-XXX", new Node()));
         }
 
         [Fact]

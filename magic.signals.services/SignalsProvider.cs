@@ -37,10 +37,10 @@ namespace magic.signals.services
                         throw new ArgumentNullException($"No name specified for type '{idxType}' in Slot attribute");
 
                     if (!typeof(ISlotAsync).IsAssignableFrom(idxType) && !typeof(ISlot).IsAssignableFrom(idxType))
-                        throw new ApplicationException($"{idxType.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
+                        throw new ArgumentException($"{idxType.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
 
                     if (_slots.ContainsKey(idxAtr.Name))
-                        throw new ApplicationException($"Slot [{idxAtr.Name}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr.Name].FullName}.");
+                        throw new ArgumentException($"Slot [{idxAtr.Name}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr.Name].FullName}.");
 
                     _slots[idxAtr.Name] = idxType;
                 }

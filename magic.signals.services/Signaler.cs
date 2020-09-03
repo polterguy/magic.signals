@@ -50,7 +50,7 @@ namespace magic.signals.services
             // Checking if license key is valid.
             var licenseEntities = key.Split(':');
             if (licenseEntities.Length != 2)
-                throw new ApplicationException("Your license must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx'.");
+                throw new ArgumentException("Your license must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx'.");
 
             /*
              * Salting hostname parts of license key, hashing it, and
@@ -63,7 +63,7 @@ namespace magic.signals.services
                 if (hash == licenseEntities[1])
                     _validLicense = true; // License is valid!
                 else
-                    throw new ApplicationException("Your license is not valid, it must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx', and it mist have been obtained from https://servergardens.com/buy/");
+                    throw new ArgumentException("Your license is not valid, it must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx', and it mist have been obtained from https://servergardens.com/buy/");
             }
         }
 
@@ -78,17 +78,17 @@ namespace magic.signals.services
         public void Signal(string name, Node input)
         {
             if (!_validLicense && (DateTime.UtcNow > _stopTime || _stopTime < DateTime.UtcNow))
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
+                throw new ArgumentException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
-            var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
+            var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (!(raw is ISlot slot))
             {
                 if (raw is ISlotAsync)
-                    throw new ApplicationException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it using SignalAsync instead.");
-                throw new ApplicationException($"I couldn't find the [{name}] slot, have you registered it?");
+                    throw new ArgumentException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it using SignalAsync instead.");
+                throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
             }
 
             slot.Signal(this, input);
@@ -106,17 +106,17 @@ namespace magic.signals.services
         public async Task SignalAsync(string name, Node input)
         {
             if (!_validLicense && DateTime.UtcNow > _stopTime)
-                throw new ApplicationException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
+                throw new ArgumentException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
-            var type = _signals.GetSlot(name) ?? throw new ApplicationException($"No slot exists for [{name}]");
+            var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (!(raw is ISlotAsync asyncSlot))
             {
                 if (raw is ISlot)
-                    throw new ApplicationException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
-                throw new ApplicationException($"I couldn't find the [{name}] slot, have you registered it?");
+                    throw new ArgumentException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
+                throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
             }
 
             await asyncSlot.SignalAsync(this, input);
