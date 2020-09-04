@@ -34,8 +34,8 @@ namespace magic.signals.services
         /// types from their string representations.</param>
         public Signaler(IServiceProvider provider, ISignalsProvider signals)
         {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _signals = signals ?? throw new ArgumentNullException(nameof(signals));
+            _provider = provider;
+            _signals = signals;
         }
 
         /// <summary>
