@@ -2,12 +2,11 @@
 
 Copyright 2019 Thomas Hansen, thomas@gaiasoul.com, all rights reserved
 
-Magic is not Open Source or Free Software, even though most of its code is
-publicly available - And you will need one license key for each production
-machine you intend to install it on. During development and testing however,
-you can use it for free, as you evaluate Magic. But once you decide to put
-Magic into production, you will need one license key for each hostname you
-intend to run Magic on.
+Magic Signals is not Open Source or Free Software - And you will need one
+license key for each production machine you intend to install it on. During
+development and testing however, you can use it for free, as you evaluate
+Magic. But once you decide to put Magic into production, you will need a
+license key.
 
 If you create Free and Open Source Software however, and you publicly make
 your source code available for everybody to download - I might give you a

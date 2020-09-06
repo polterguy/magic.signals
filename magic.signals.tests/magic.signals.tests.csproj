@@ -12,7 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="magic.node.extensions" Version="8.1.9"/>
+    <PackageReference Include="magic.node.extensions" Version="8.1.10"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\magic.signals.services\magic.signals.services.csproj"/>

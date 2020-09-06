@@ -9,21 +9,29 @@
     <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
     <Description>Contracts for magic.signals, a Super Signals implementation for Magic built on magic.node, allowing you to invoke functionality from one component in another component without any (direct) references between your components.</Description>
     <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/polterguy/magic.signals/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>https://polterguy.github.io/favicon.ico</PackageIconUrl>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>8.1.9</PackageVersion>
+    <PackageVersion>8.1.10</PackageVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/polterguy/magic.signals.git</RepositoryUrl>
     <PackageTags>signals, active events, events, DSL, scripting, dynamic, function, invocation, functional</PackageTags>
+    <PackageIcon>ico.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../ico.png" Pack="true" PackagePath="$(PackageIcon)"/>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin/Release/netstandard2.0/magic.signals.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.node" Version="8.1.9" />
+    <PackageReference Include="magic.node" Version="8.1.*" />
   </ItemGroup>
 </Project>
