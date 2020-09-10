@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\magic.node\magic.node.expressions\dev_magic.node.expressions.csproj" />
     <ProjectReference Include="..\..\magic.node\magic.node.extensions\dev_magic.node.extensions.csproj" />
     <ProjectReference Include="..\magic.signals.services\dev_magic.signals.services.csproj" />
   </ItemGroup>
