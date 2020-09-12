@@ -113,12 +113,3 @@ A lot of the idea behind Magic Signals is that combined with [Magic Node](https:
 and espcially its ability to parse _"Hyperlambda"_, it becomes a very good foundation for a DSL, or a Domain Specific
 programming Language implementation, allowing you to easily create your own programming languages, and keywords,
 based upon Hyperlambda syntax trees.
-
-## License
-
-Although most of Magic's source code is Open Source, you will need a license key to use it.
-[You can obtain a license key here](https://servergardens.com/buy/).
-Notice, 7 days after you put Magic into production, it will stop working, unless you have a valid
-license for it.
-
-* [Get licensed](https://servergardens.com/buy/)
