@@ -1,7 +1,7 @@
 
 # Magic Signals for .Net
 
-[![Build status](https://travis-ci.org/polterguy/magic.signals.svg?master)](https://travis-ci.org/polterguy/magic.signals)
+[![Build status](https://travis-ci.com/polterguy/magic.signals.svg?master)](https://travis-ci.com/polterguy/magic.signals)
 
 Magic Signals is a _"Super Signals"_ implementation for .Net Core built on top of [Magic Node](https://github.com/polterguy/magic.node),
 allowing you to invoke functions from one assembly in another assembly without having any direct references between the projects.
