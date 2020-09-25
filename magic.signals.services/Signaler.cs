@@ -63,7 +63,7 @@ namespace magic.signals.services
                 if (hash == licenseEntities[1])
                     _validLicense = true; // License is valid!
                 else
-                    throw new ArgumentException("Your license is not valid, it must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx', and it mist have been obtained from https://servergardens.com/buy/");
+                    throw new ArgumentException("Your license is not valid, it must contain your email and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx', and it mist have been obtained from https://servergardens.com/buy/");
             }
         }
 
@@ -77,21 +77,17 @@ namespace magic.signals.services
         /// <param name="input">Arguments being passed in to slot.</param>
         public void Signal(string name, Node input)
         {
-            if (!_validLicense && (DateTime.UtcNow > _stopTime || _stopTime < DateTime.UtcNow))
+            if (!_validLicense && DateTime.UtcNow > _stopTime)
                 throw new ArgumentException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
 
             var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
-            if (!(raw is ISlot slot))
-            {
-                if (raw is ISlotAsync)
-                    throw new ArgumentException($"The [{name}] slot is an async slot, and you tried to invoke it synchronously. Please invoke it using SignalAsync instead.");
-                throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
-            }
-
-            slot.Signal(this, input);
+            if (raw is ISlot slot)
+                slot.Signal(this, input);
+            else
+                throw new ArgumentException($"I couldn't find a synchronous version of the [{name}] slot?");
         }
 
         /// <summary>
@@ -103,7 +99,7 @@ namespace magic.signals.services
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
         /// <returns>An awaitable task.</returns>
-        public async Task SignalAsync(string name, Node input)
+        public Task SignalAsync(string name, Node input)
         {
             if (!_validLicense && DateTime.UtcNow > _stopTime)
                 throw new ArgumentException("You seem to be missing a valid licence, please obtain one at https://servergardens.com/buy/ if you wish to continue using Magic.");
@@ -112,14 +108,15 @@ namespace magic.signals.services
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
-            if (!(raw is ISlotAsync asyncSlot))
-            {
-                if (raw is ISlot)
-                    throw new ArgumentException($"The [{name}] slot is not an async slot, and you tried to invoke it as such. Please invoke it synchronously.");
-                throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
-            }
+            if (raw is ISlotAsync asyncSlot)
+                return asyncSlot.SignalAsync(this, input);
 
-            await asyncSlot.SignalAsync(this, input);
+            if (raw is ISlot syncSlot)
+            {
+                syncSlot.Signal(this, input);
+                return Task.CompletedTask;
+            }
+            throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
         }
 
         /// <summary>
@@ -188,7 +185,7 @@ namespace magic.signals.services
         /// none are found.</returns>
         public T Peek<T>(string name) where T : class
         {
-            return _stack.AsEnumerable().Reverse().FirstOrDefault(x => x.Item1 == name)?.Item2 as T;
+            return _stack.LastOrDefault(x => x.Item1 == name)?.Item2 as T;
         }
 
         #endregion
