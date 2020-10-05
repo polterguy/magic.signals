@@ -20,7 +20,7 @@ namespace magic.signals.services
     public class Signaler : ISignaler
     {
         static bool _validLicense;
-        static readonly DateTime _stopTime = DateTime.UtcNow.AddDays(7);
+        static readonly DateTime _stopTime = DateTime.UtcNow.AddHours(47);
 
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
@@ -50,7 +50,7 @@ namespace magic.signals.services
             // Checking if license key is valid.
             var licenseEntities = key.Split(':');
             if (licenseEntities.Length != 2)
-                throw new ArgumentException("Your license must contain your domain (hostname/DNS entry) and your actual key, separated by ':', e.g. 'api.some-website.com:xxxxxxx'.");
+                throw new ArgumentException("Your license must contain your email address and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx'.");
 
             /*
              * Salting hostname parts of license key, hashing it, and
@@ -58,12 +58,12 @@ namespace magic.signals.services
              */
             using (var sha = SHA256.Create())
             {
-                var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "thomas hansen was here"));
+                var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "øåØdette-blir-bra"));
                 var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
                 if (hash == licenseEntities[1])
                     _validLicense = true; // License is valid!
                 else
-                    throw new ArgumentException("Your license is not valid, it must contain your email and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx', and it mist have been obtained from https://servergardens.com/buy/");
+                    throw new ArgumentException("Your license must contain your email address and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx'.");
             }
         }
 
