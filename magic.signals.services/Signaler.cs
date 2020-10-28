@@ -137,8 +137,8 @@ namespace magic.signals.services
             }
             finally
             {
-                var obj = _stack[_stack.Count - 1];
-                _stack.Remove(obj);
+                var obj = _stack.Last();
+                _stack.RemoveAt(_stack.Count - 1);
                 if (obj is IDisposable disp)
                     disp.Dispose();
             }
@@ -166,8 +166,8 @@ namespace magic.signals.services
             }
             finally
             {
-                var obj = _stack[_stack.Count - 1];
-                _stack.Remove(obj);
+                var obj = _stack.Last();
+                _stack.RemoveAt(_stack.Count - 1);
                 if (obj is IDisposable disp)
                     disp.Dispose();
             }
