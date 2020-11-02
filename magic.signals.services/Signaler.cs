@@ -4,13 +4,15 @@
  */
 
 using System;
-using System.Linq;
 using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using magic.node;
 using magic.signals.contracts;
+using magic.crypto.combinations;
+using magic.node.extensions.hyperlambda;
+using magic.node.extensions;
 
 namespace magic.signals.services
 {
@@ -20,8 +22,15 @@ namespace magic.signals.services
     public class Signaler : ISignaler
     {
         static bool _validLicense;
-        static readonly DateTime _stopTime = DateTime.UtcNow.AddHours(47);
-
+        static DateTime _stopTime = DateTime.UtcNow.AddHours(47);
+        const int MAJOR_VERSION = 8;
+        const string PUBLIC_KEY = @"
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm6ZleQuIJiD3DaI/1EUdS8WQgQYc6RTKXNu/7VJwgxd
+3jUirQeGmcAP105RjTG46Htr8Ne7TomNyLLtv+XGG+GwQ7UO8gcXULSwj/N1AeHhc9xH/0HdCfiPUOHyZhZlbLt
+veHXaxMTTKVYS0CO7teQJc6EwK17YzSn6q5h8Dp/K6oTdOXe2gmR4asIDwjBdNWF+KdalhQF+piGpZvaUS8+QDZ
+TIBYKPHO4DC6UmHJDk20mxPSzEFytFaaVM2dj6DTtq8RHkoQ4lfwn5zEauTjT8iuzfcYwckkEVBehyOGOOooSlF
+ra0iTkZcZgIC6V2n7wluxNS/VyV5SlnF56qVaQIDAQAB";
+        internal static Node _licenseData = null;
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
         readonly List<Tuple<string, object>> _stack = new List<Tuple<string, object>>();
@@ -39,31 +48,47 @@ namespace magic.signals.services
         }
 
         /// <summary>
-        /// Sets your license key for current installation.
+        /// Sets your license for current installation.
         ///
-        /// Notice, without a valid license key, Magic will stop functioning
-        /// after 7 days.
+        /// Notice, without a valid license, Magic will stop working
+        /// after 47 hours.
         /// </summary>
-        /// <param name="key">Your license key, as obtained from Server Gardens.</param>
-        static public void SetLicenseKey(string key)
+        /// <param name="license">Your license, as obtained from Server Gardens.</param>
+        static public void SetLicenseKey(string license)
         {
-            // Checking if license key is valid.
-            var licenseEntities = key.Split(':');
-            if (licenseEntities.Length != 2)
-                throw new ArgumentException("Your license must contain your email address and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx'.");
+            // Sanity checking invocation.
+            if (_licenseData != null)
+                throw new Exception("You have already applied your license, please avoid doing it twice.");
 
-            /*
-             * Salting hostname parts of license key, hashing it, and
-             * comparing it to the license key of the license key.
-             */
-            using (var sha = SHA256.Create())
+            // This will throw an exception if the signature, and/or data has been tampered with.
+            var verifier = new Verifier(
+                Convert.FromBase64String(PUBLIC_KEY.Replace("\r", "").Replace("\n", "")));
+            var licenseData = Encoding.UTF8.GetString(
+                verifier.Verify(Convert.FromBase64String(license.Replace("\r", "").Replace("\n", ""))));
+
+            // Parsing license, and keeping meta data around.
+            _licenseData = new Parser(licenseData).Lambda();
+
+            // Checking if user is using a version that's not included in the license.
+            var untilVersion = _licenseData.Children.FirstOrDefault(x => x.Name == "valid-version")?.GetEx<int>() ?? -1;
+            if (untilVersion != -1 && untilVersion < MAJOR_VERSION)
+                throw new Exception("Your license is not valid for the current version, please contact license@servergardens.com or visit https://servergardens.com/buy for a new license, or downgrade Magic to an older version");
+
+            // Checking if it's a temporary license key, with an absolute expiration date.
+            var expiration = _licenseData.Children.FirstOrDefault(x => x.Name == "expires")?.GetEx<DateTime>() ?? DateTime.MinValue;
+            if (expiration != DateTime.MinValue)
             {
-                var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(licenseEntities[0] + "øåØdette-blir-bra"));
-                var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-                if (hash == licenseEntities[1])
-                    _validLicense = true; // License is valid!
-                else
-                    throw new ArgumentException("Your license must contain your email address and your actual key, separated by ':', e.g. 'foo@bar.com:xxxxxxx'.");
+                // License has an absolute expiration date.
+                _stopTime = expiration;
+
+                // Checking if license has expired.
+                if (expiration <= DateTime.UtcNow)
+                    throw new Exception("Your license has expired, please contact license@servergardens.com or visit https://servergardens.com/buy for a new license");
+            }
+            else
+            {
+                // Not a license with an absolute expiration date.
+                _validLicense = true;
             }
         }
 

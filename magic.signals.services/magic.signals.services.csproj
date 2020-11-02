@@ -35,4 +35,9 @@
     <ProjectReference Include="..\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="magic.crypto" Version="8.6.*" />
+    <PackageReference Include="magic.node.extensions" Version="8.6.*" />
+  </ItemGroup>
+
 </Project>
