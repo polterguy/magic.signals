@@ -23,7 +23,14 @@ namespace magic.signals.services
         public void Signal(ISignaler signaler, Node input)
         {
             if (Signaler._licenseData != null)
-                input.AddRange(Signaler._licenseData.Children.Select(x => x.Clone()));
+            {
+                input.AddRange(
+                    Signaler._licenseData.Children
+
+                        // Notice, we don't return price information by default, to avoid focusing on this in front of developers.
+                        .Where(x => x.Name != "price" && x.Name != "currency")
+                        .Select(x => x.Clone()));
+            }
         }
     }
 }
