@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,25 +6,19 @@
     <PackageId>magic.signals.contracts</PackageId>
     <Authors>Thomas Hansen</Authors>
     <Company>Thomas Hansen</Company>
-    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
+    <Copyright>Thomas Hansen, thomas@servergardens.com</Copyright>
     <Description>Contracts for magic.signals, a Super Signals implementation for Magic built on magic.node, allowing you to invoke functionality from one component in another component without any (direct) references between your components. To use package go to https://polterguy.github.io</Description>
     <PackageProjectUrl>https://github.com/polterguy/magic.signals</PackageProjectUrl>
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>8.9.9</PackageVersion>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/polterguy/magic.signals.git</RepositoryUrl>
     <PackageTags>signals, active events, events, DSL, scripting, dynamic, function, invocation, functional</PackageTags>
     <PackageIcon>ico.png</PackageIcon>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="../ico.png" Pack="true" PackagePath="$(PackageIcon)"/>
+    <None Include="../ico.png" Pack="true" PackagePath="$(PackageIcon)" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -32,6 +26,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.node" Version="8.9.*" />
+    <PackageReference Include="magic.node" Version="8.9.9" />
   </ItemGroup>
 </Project>
