@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/polterguy/magic.signals.git</RepositoryUrl>
     <PackageTags>signals, active events, events, DSL, scripting, dynamic, function, invocation, functional</PackageTags>
     <PackageIcon>ico.png</PackageIcon>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
