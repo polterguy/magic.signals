@@ -8,4 +8,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\magic.node\magic.node\dev_magic.node.csproj" />
   </ItemGroup>
+
 </Project>
