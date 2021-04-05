@@ -1,4 +1,3 @@
-
 # Magic Signals
 
 Magic Signals is a _"Super Signals"_ implementation for .Net Core built on top of [Magic Node](https://github.com/polterguy/magic.node),
