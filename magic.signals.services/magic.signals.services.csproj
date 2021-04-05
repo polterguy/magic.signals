@@ -17,12 +17,16 @@
     <PackageIcon>ico.png</PackageIcon>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../ico.png" Pack="true" PackagePath="$(PackageIcon)" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.services.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.crypto" Version="8.9.9" />
     <PackageReference Include="magic.node.extensions" Version="8.9.9" />
   </ItemGroup>
 

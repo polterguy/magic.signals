@@ -9,8 +9,8 @@ using System.Collections.Generic;
 namespace magic.signals.contracts
 {
     /// <summary>
-    /// Interface responsible for feeding your signaler with signals,
-    /// implying strings to types mappings.
+    /// Interface responsible for feeding your signaler with slots,
+    /// implying string to type mappings.
     /// </summary>
     public interface ISignalsProvider
     {

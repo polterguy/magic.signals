@@ -17,12 +17,16 @@
     <PackageIcon>ico.png</PackageIcon>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../ico.png" Pack="true" PackagePath="$(PackageIcon)" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard2.0/magic.signals.contracts.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
