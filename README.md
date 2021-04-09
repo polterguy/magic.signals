@@ -30,7 +30,7 @@ instance to Signal the above slot by using something such as the following.
 
 ```csharp
 /*
- * This will invoke our Signal method above.
+ * This will invoke our Signal method above
  */
 var args = new Node();
 signaler.Signal("foo.bar", args);
