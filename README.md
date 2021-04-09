@@ -131,6 +131,24 @@ programming Language implementation, allowing you to easily create your own prog
 based upon Hyperlambda syntax trees. Hyperlambda in this context being the textual representation of your `Node`
 hierarchy.
 
+## Project website
+
+The source code for this repository can be found at [github.com/polterguy/magic.signals](https://github.com/polterguy/magic.signals), and you can provide feedback, provide bug reports, etc at the same place.
+
+## Quality gates
+
+- [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=security_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=sqale_index)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+- [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.signals&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=polterguy_magic.signals)
+
 ## License
 
 This project is the copyright(c) 2020-2021 of Thomas Hansen thomas@servergardens.com, and is licensed under the terms
