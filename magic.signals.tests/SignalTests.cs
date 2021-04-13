@@ -49,6 +49,28 @@ namespace magic.signals.tests
         }
 
         [Fact]
+        public async Task SignalNoExistingAsync_Throws()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
+            await Assert.ThrowsAsync<ArgumentException>(async () => await signaler.SignalAsync("foo.bar-XXX", new Node()));
+        }
+
+        [Fact]
+        public void SignalAsyncFromSync_Throws()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
+            Assert.Throws<ArgumentException>(() => signaler.Signal("foo.bar.async", new Node()));
+        }
+
+        [Fact]
         public void StackTest()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
