@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
@@ -86,9 +85,7 @@ namespace magic.signals.tests
          */
         IServiceProvider Initialize()
         {
-            var configuration = new ConfigurationBuilder().Build();
             var services = new ServiceCollection();
-            services.AddTransient<IConfiguration>((svc) => configuration);
 
             // Initializing slots, first by making sure we retrieve all classes implementin ISlot, and having 
             // the SlotAttribute declared as an attribute.
