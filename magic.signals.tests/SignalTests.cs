@@ -63,6 +63,70 @@ namespace magic.signals.tests
             Assert.Equal("hello world", result.Value);
         }
 
+        private class Disposable : IDisposable
+        {
+            public bool disposed = false;
+
+            public void Dispose()
+            {
+                this.disposed = true;
+            }
+
+            public override string ToString()
+            {
+                return "disposed invoked";
+            }
+        }
+
+        [Fact]
+        public void StackTestDisposable()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            var result = new Node();
+            var disposable = new Disposable();
+            signaler.Scope("value.dispose", disposable, () => signaler.Signal("stack.test.dispose", result));
+
+            // Asserts.
+            Assert.Equal("disposed invoked", result.Value);
+            Assert.True(disposable.disposed);
+        }
+
+        [Fact]
+        public async Task StackTestAsyn()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            var result = new Node();
+            await signaler.ScopeAsync("value", "hello world", async () => await signaler.SignalAsync("stack.test", result));
+
+            // Asserts.
+            Assert.Equal("hello world", result.Value);
+        }
+
+        [Fact]
+        public async Task StackTestDisposableAsync()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Pushing some string unto our stack.
+            var result = new Node();
+            var disposable = new Disposable();
+            await signaler.ScopeAsync("value.dispose", disposable, async () => await signaler.SignalAsync("stack.test.dispose", result));
+
+            // Asserts.
+            Assert.Equal("disposed invoked", result.Value);
+            Assert.True(disposable.disposed);
+        }
+
         [Fact]
         public async Task AsyncSignal()
         {

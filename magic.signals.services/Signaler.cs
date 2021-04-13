@@ -99,7 +99,7 @@ namespace magic.signals.services
             {
                 var obj = _stack.Last();
                 _stack.RemoveAt(_stack.Count - 1);
-                if (obj is IDisposable disp)
+                if (obj.Item2 is IDisposable disp)
                     disp.Dispose();
             }
         }
@@ -128,7 +128,7 @@ namespace magic.signals.services
             {
                 var obj = _stack.Last();
                 _stack.RemoveAt(_stack.Count - 1);
-                if (obj is IDisposable disp)
+                if (obj.Item2 is IDisposable disp)
                     disp.Dispose();
             }
         }

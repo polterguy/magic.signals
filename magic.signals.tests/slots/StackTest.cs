@@ -16,4 +16,13 @@ namespace magic.signals.tests.slots
             input.Value = signaler.Peek<string>("value");
         }
     }
+
+    [Slot(Name = "stack.test.dispose")]
+    public class StackTestDispose : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+            input.Value = signaler.Peek<object>("value.dispose").ToString();
+        }
+    }
 }
