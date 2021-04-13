@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.services", "m
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.tests", "magic.signals.tests\magic.signals.tests.csproj", "{1D1D0390-7442-45A7-AB32-A65874E48FD9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "signals", "signals", "{67F97B9E-00E3-4264-9C09-8B8C809F368F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,11 +37,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{061F0B38-5854-4F15-8B16-84F9A826E287} = {67F97B9E-00E3-4264-9C09-8B8C809F368F}
-		{A1EC9FD5-901E-429C-8A30-07C183C283CF} = {67F97B9E-00E3-4264-9C09-8B8C809F368F}
-		{1D1D0390-7442-45A7-AB32-A65874E48FD9} = {67F97B9E-00E3-4264-9C09-8B8C809F368F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {91E466E3-D7D1-456A-A29E-2D09F8C41328}
