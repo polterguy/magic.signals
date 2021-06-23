@@ -169,7 +169,7 @@ namespace magic.signals.tests
         /*
          * Helper method to wire up and create our IServiceProvider correctly.
          */
-        IServiceProvider Initialize()
+        static IServiceProvider Initialize()
         {
             var services = new ServiceCollection();
 
