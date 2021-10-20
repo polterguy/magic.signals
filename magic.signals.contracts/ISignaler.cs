@@ -19,15 +19,17 @@ namespace magic.signals.contracts
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
-        void Signal(string name, Node input);
+        /// <param name="functor">Function to execute after execution is done.</param>
+        void Signal(string name, Node input, Action functor = null);
 
         /// <summary>
         /// Signals the slot with the name from the input node's Name property async.
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
+        /// <param name="functor">Function to execute after execution is done.</param>
         /// <returns>Awaitable task.</returns>
-        Task SignalAsync(string name, Node input);
+        Task SignalAsync(string name, Node input, Action functor = null);
 
         /// <summary>
         /// Adds the given stack value unto the stack with the given name,

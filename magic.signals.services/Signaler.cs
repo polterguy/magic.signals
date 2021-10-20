@@ -41,7 +41,7 @@ namespace magic.signals.services
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
-        public void Signal(string name, Node input)
+        public void Signal(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
@@ -51,6 +51,9 @@ namespace magic.signals.services
                 slot.Signal(this, input);
             else
                 throw new ArgumentException($"I couldn't find a synchronous version of the [{name}] slot?");
+
+            // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
+            functor?.Invoke();
         }
 
         /// <summary>
@@ -62,19 +65,33 @@ namespace magic.signals.services
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
         /// <returns>An awaitable task.</returns>
-        public Task SignalAsync(string name, Node input)
+        public async Task SignalAsync(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (raw is ISlotAsync asyncSlot)
-                return asyncSlot.SignalAsync(this, input);
+            {
+                // Returning task associated with slot to caller.
+                await asyncSlot.SignalAsync(this, input);
+
+                // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
+                functor?.Invoke();
+
+                // Returning to avoid throwing exception further down.
+                return;
+            }
 
             if (raw is ISlot syncSlot)
             {
                 syncSlot.Signal(this, input);
-                return Task.CompletedTask;
+
+                // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
+                functor?.Invoke();
+
+                // Returning to avoid throwing exception further down.
+                return;
             }
             throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
         }
