@@ -38,6 +38,50 @@ namespace magic.signals.tests
         }
 
         [Fact]
+        public void SignalWithFunctor()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Creating some arguments for our signal.
+            var functorExecuted = false;
+            var input = new Node("", "hello ");
+
+            // Signaling the 'foo.bar' slot with the given arguments.
+            signaler.Signal("foo.bar", input, () =>
+            {
+                functorExecuted = true;
+            });
+
+            // Asserts.
+            Assert.Equal("hello world", input.Get<string>());
+            Assert.True(functorExecuted);
+        }
+
+        [Fact]
+        public async Task SignalWithFunctorAsync()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+
+            // Creating some arguments for our signal.
+            var functorExecuted = false;
+            var input = new Node("", "hello ");
+
+            // Signaling the 'foo.bar' slot with the given arguments.
+            await signaler.SignalAsync("foo.bar", input, () =>
+            {
+                functorExecuted = true;
+            });
+
+            // Asserts.
+            Assert.Equal("hello world", input.Get<string>());
+            Assert.True(functorExecuted);
+        }
+
+        [Fact]
         public void SignalNoExisting_Throws()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
