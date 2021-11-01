@@ -41,6 +41,7 @@ namespace magic.signals.services
         /// </summary>
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
+        /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
         public void Signal(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
@@ -65,6 +66,7 @@ namespace magic.signals.services
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
         /// <returns>An awaitable task.</returns>
+        /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
         public async Task SignalAsync(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
