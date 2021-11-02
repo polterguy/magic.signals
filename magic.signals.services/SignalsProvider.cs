@@ -30,19 +30,19 @@ namespace magic.signals.services
         {
             foreach (var idxType in types)
             {
-                foreach (var idxAtr in idxType.GetCustomAttributes(true).OfType<SlotAttribute>())
+                foreach (var idxAtr in idxType.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
                 {
                     // Some basic sanity checking.
-                    if (string.IsNullOrEmpty(idxAtr.Name))
+                    if (string.IsNullOrEmpty(idxAtr))
                         throw new ArgumentNullException($"No name specified for type '{idxType}' in Slot attribute");
 
                     if (!typeof(ISlotAsync).IsAssignableFrom(idxType) && !typeof(ISlot).IsAssignableFrom(idxType))
                         throw new ArgumentException($"{idxType.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
 
-                    if (_slots.ContainsKey(idxAtr.Name))
-                        throw new ArgumentException($"Slot [{idxAtr.Name}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr.Name].FullName}.");
+                    if (_slots.ContainsKey(idxAtr))
+                        throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {idxType.FullName} is already registered by {_slots[idxAtr].FullName}.");
 
-                    _slots[idxAtr.Name] = idxType;
+                    _slots[idxAtr] = idxType;
                 }
             }
         }
