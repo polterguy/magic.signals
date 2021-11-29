@@ -88,7 +88,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            Assert.Throws<ArgumentException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+            Assert.Throws<HyperlambdaException>(() => signaler.Signal("foo.bar-XXX", new Node()));
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            await Assert.ThrowsAsync<ArgumentException>(async () => await signaler.SignalAsync("foo.bar-XXX", new Node()));
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await signaler.SignalAsync("foo.bar-XXX", new Node()));
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace magic.signals.tests
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
             // Assuming this one will choke, since there are no 'foo.bar-XXX' slots registered.
-            Assert.Throws<ArgumentException>(() => signaler.Signal("foo.bar.async", new Node()));
+            Assert.Throws<HyperlambdaException>(() => signaler.Signal("foo.bar.async", new Node()));
         }
 
         [Fact]

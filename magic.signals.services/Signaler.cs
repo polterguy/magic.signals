@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 namespace magic.signals.services
@@ -43,14 +44,14 @@ namespace magic.signals.services
         /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
         public void Signal(string name, Node input, Action functor = null)
         {
-            var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
+            var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
             if (raw is ISlot slot)
                 slot.Signal(this, input);
             else
-                throw new ArgumentException($"I couldn't find a synchronous version of the [{name}] slot?");
+                throw new HyperlambdaException($"I couldn't find a synchronous version of the [{name}] slot?");
 
             // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
             functor?.Invoke();
@@ -68,7 +69,7 @@ namespace magic.signals.services
         /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
         public async Task SignalAsync(string name, Node input, Action functor = null)
         {
-            var type = _signals.GetSlot(name) ?? throw new ArgumentException($"No slot exists for [{name}]");
+            var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"No slot exists for [{name}]");
             var raw = _provider.GetService(type);
 
             // Basic sanity checking.
@@ -94,7 +95,7 @@ namespace magic.signals.services
                 // Returning to avoid throwing exception further down.
                 return;
             }
-            throw new ArgumentException($"I couldn't find the [{name}] slot, have you registered it?");
+            throw new HyperlambdaException($"I couldn't find the [{name}] slot, have you registered it?");
         }
 
         /// <summary>
