@@ -37,6 +37,16 @@ namespace magic.signals.tests
         }
 
         [Fact]
+        public void VerifyRegistered()
+        {
+            // Creating our IServiceProvider, and retrieving our ISignaler.
+            var kernel = Initialize();
+            var provider = kernel.GetService(typeof(ISignalsProvider)) as ISignalsProvider;
+            var keys = provider.Keys;
+            Assert.NotNull(keys.SingleOrDefault(x => x == "foo.bar"));
+        }
+
+        [Fact]
         public void SignalWithFunctor()
         {
             // Creating our IServiceProvider, and retrieving our ISignaler.
@@ -233,7 +243,8 @@ namespace magic.signals.tests
             }
 
             // Making sure we use the default ISignalsProvider and ISignaler services.
-            services.AddSingleton<ISignalsProvider>((svc) => new SignalsProvider(slots));
+            var provider = new SignalsProvider(slots);
+            services.AddSingleton<ISignalsProvider>((svc) => provider);
             services.AddTransient<ISignaler, Signaler>();
 
             // Building and returning service provider to caller.
