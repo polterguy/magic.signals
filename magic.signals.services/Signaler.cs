@@ -85,17 +85,10 @@ namespace magic.signals.services
                 return;
             }
 
-            if (raw is ISlot syncSlot)
-            {
-                syncSlot.Signal(this, input);
+            (raw as ISlot).Signal(this, input);
 
-                // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
-                functor?.Invoke();
-
-                // Returning to avoid throwing exception further down.
-                return;
-            }
-            throw new HyperlambdaException($"I couldn't find the [{name}] slot, have you registered it?");
+            // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
+            functor?.Invoke();
         }
 
         /// <summary>
