@@ -10,7 +10,7 @@
     <Description>A Super Signals implementation for Magic built on magic.node, allowing you to invoke functionality from one component in another component without any (direct) references between your components. To use package go to https://polterguy.github.io</Description>
     <PackageProjectUrl>https://aista.com</PackageProjectUrl>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>14.0.10</PackageVersion>
+    <PackageVersion>14.0.11</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/polterguy/magic.signals</RepositoryUrl>
     <PackageTags>signals, active events, events, dsl, scripting, dynamic, function, invocation, functional, hyperlambda</PackageTags>
@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.node.extensions" Version="14.0.10" />
+    <PackageReference Include="magic.node.extensions" Version="14.0.11" />
   </ItemGroup>
 
 </Project>
