@@ -6,11 +6,11 @@
     <PackageId>magic.signals.contracts</PackageId>
     <Authors>Aista, Ltd</Authors>
     <Company>Aista, Ltd</Company>
-    <Copyright>Aista, Ltd, info@aista.com</Copyright>
+    <Copyright>Aista, Ltd</Copyright>
     <Description>Contracts for magic.signals, a Super Signals implementation for Magic built on magic.node, allowing you to invoke functionality from one component in another component without any (direct) references between your components. To use package go to https://polterguy.github.io</Description>
-    <PackageProjectUrl>https://aista.com</PackageProjectUrl>
+    <PackageProjectUrl>https://ainiro.io</PackageProjectUrl>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>15.9.1</PackageVersion>
+    <PackageVersion>15.10.11</PackageVersion>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/polterguy/magic.signals</RepositoryUrl>
     <PackageTags>signals, active events, events, dsl, scripting, dynamic, function, invocation, functional, hyperlambda</PackageTags>
@@ -40,6 +40,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.node" Version="15.9.1" />
+    <PackageReference Include="magic.node" Version="15.10.11" />
   </ItemGroup>
 </Project>
