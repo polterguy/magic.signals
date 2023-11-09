@@ -70,9 +70,10 @@ namespace magic.signals.services
         public async Task SignalAsync(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"No slot exists for [{name}]");
-            var raw = _provider.GetService(type);
+            var raw = _provider.GetService(type) ?? Activator.CreateInstance(type);
 
             // Basic sanity checking.
+
             if (raw is ISlotAsync asyncSlot)
             {
                 // Returning task associated with slot to caller.
