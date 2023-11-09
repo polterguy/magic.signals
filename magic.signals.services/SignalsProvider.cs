@@ -16,8 +16,6 @@ namespace magic.signals.services
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
 
-        #region [ -- Interface implementation -- ]
-
         /// <summary>
         /// Creates an instance of the signals provider class. Notice, this should normally be associated
         /// with your IoC container as a Singleton instance somehow.
@@ -46,6 +44,8 @@ namespace magic.signals.services
             }
         }
 
+        #region [ -- Interface implementation -- ]
+
         /// <summary>
         /// Returns all slots, or rather all slot names to be specific.
         /// </summary>
@@ -60,6 +60,28 @@ namespace magic.signals.services
         {
             _slots.TryGetValue(name, out Type result);
             return result;
+        }
+
+        /// <summary>
+        /// Adds the specified type as a slot implementation.
+        /// </summary>
+        /// <param name="type">Type to add.</param>
+        public void Add(Type type)
+        {
+            foreach (var idxAtr in type.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
+            {
+                // Some basic sanity checking.
+                if (string.IsNullOrEmpty(idxAtr))
+                    throw new ArgumentNullException($"No name specified for type '{type}' in Slot attribute");
+
+                if (!typeof(ISlotAsync).IsAssignableFrom(type) && !typeof(ISlot).IsAssignableFrom(type))
+                    throw new ArgumentException($"{type.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
+
+                if (_slots.ContainsKey(idxAtr))
+                    throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {type.FullName} is already registered by {_slots[idxAtr].FullName}.");
+
+                _slots[idxAtr] = type;
+            }
         }
 
         #endregion

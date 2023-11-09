@@ -25,5 +25,11 @@ namespace magic.signals.contracts
         /// implementation.
         /// </summary>
         IEnumerable<string> Keys { get; }
+
+        /// <summary>
+        /// Adds the specified type as a slot implementation.
+        /// </summary>
+        /// <param name="type">Type to add.</param>
+        void Add(Type type);
     }
 }
