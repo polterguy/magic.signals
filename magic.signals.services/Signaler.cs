@@ -45,10 +45,21 @@ namespace magic.signals.services
         public void Signal(string name, Node input, Action functor = null)
         {
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"No slot exists for [{name}]");
-            var raw = _provider.GetService(type);
+            var svc = _provider.GetService(type);
 
             // Basic sanity checking.
-            if (raw is ISlot slot)
+            if (svc == null)
+            {
+                // Dynamically compiled and loaded assemblies cannot be registered in DI container.
+                var ctor = type.GetConstructor(new Type[] {});
+                if (ctor != null)
+                    svc = Activator.CreateInstance(type);
+                else
+                    svc = Activator.CreateInstance(type, new object[] { _provider });
+            }
+
+            // Basic sanity checking.
+            if (svc is ISlot slot)
                 slot.Signal(this, input);
             else
                 throw new HyperlambdaException($"I couldn't find a synchronous version of the [{name}] slot?");
@@ -69,12 +80,22 @@ namespace magic.signals.services
         /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
         public async Task SignalAsync(string name, Node input, Action functor = null)
         {
+            // Creatingour instance first using default DI container.
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"No slot exists for [{name}]");
-            var raw = _provider.GetService(type) ?? Activator.CreateInstance(type);
+            var svc = _provider.GetService(type);
 
             // Basic sanity checking.
+            if (svc == null)
+            {
+                // Dynamically compiled and loaded assemblies cannot be registered in DI container.
+                var ctor = type.GetConstructor(new Type[] {});
+                if (ctor != null)
+                    svc = Activator.CreateInstance(type);
+                else
+                    svc = Activator.CreateInstance(type, new object[] { _provider });
+            }
 
-            if (raw is ISlotAsync asyncSlot)
+            if (svc is ISlotAsync asyncSlot)
             {
                 // Returning task associated with slot to caller.
                 await asyncSlot.SignalAsync(this, input);
@@ -86,7 +107,7 @@ namespace magic.signals.services
                 return;
             }
 
-            (raw as ISlot).Signal(this, input);
+            (svc as ISlot).Signal(this, input);
 
             // Invoking callback if caller provided a callback to be executed after invocation of slot is done.
             functor?.Invoke();
