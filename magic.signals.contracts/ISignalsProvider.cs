@@ -31,5 +31,11 @@ namespace magic.signals.contracts
         /// </summary>
         /// <param name="type">Type to add.</param>
         void Add(Type type);
+
+        /// <summary>
+        /// Removes the specified type as a slot resolver.
+        /// </summary>
+        /// <param name="type">Type to remove.</param>
+        void Remove(Type type);
     }
 }

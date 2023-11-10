@@ -84,6 +84,18 @@ namespace magic.signals.services
             }
         }
 
+        /// <summary>
+        /// Removes the specified slot.
+        /// </summary>
+        /// <param name="type">Type to add.</param>
+        public void Remove(Type type)
+        {
+            foreach (var idxAtr in type.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
+            {
+                _slots.Remove(idxAtr);
+            }
+        }
+
         #endregion
     }
 }
