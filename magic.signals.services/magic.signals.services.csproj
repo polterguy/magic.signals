@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>magic.signals</PackageId>
-    <Authors>Aista, Ltd</Authors>
-    <Company>Aista, Ltd</Company>
-    <Copyright>Aista, Ltd</Copyright>
+    <Authors>AINIRO.IO, Ltd</Authors>
+    <Company>AINIRO.IO, Ltd</Company>
+    <Copyright>AINIRO.IO, Ltd</Copyright>
     <Description>A Super Signals implementation for Magic built on magic.node, allowing you to invoke functionality from one component in another component without any (direct) references between your components. To use package go to https://polterguy.github.io</Description>
     <PackageProjectUrl>https://ainiro.io</PackageProjectUrl>
     <PackOnBuild>true</PackOnBuild>
